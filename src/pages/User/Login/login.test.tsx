@@ -1,6 +1,6 @@
-﻿import { render, fireEvent, act } from '@testing-library/react';
+﻿import { TestBrowser } from '@@/testBrowser';
+import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
-import { TestBrowser } from '@@/testBrowser';
 
 // @ts-ignore
 import { startMock } from '@@/requestRecordMock';
@@ -85,7 +85,7 @@ describe('Login Page', () => {
     // 等待接口返回结果
     await waitTime(5000);
 
-    await rootContainer.findAllByText('Ant Design Pro');
+    await rootContainer.findAllByText('行展软件');
 
     expect(rootContainer.asFragment()).toMatchSnapshot();
 
