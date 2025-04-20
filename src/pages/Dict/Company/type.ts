@@ -1,6 +1,6 @@
 export interface CompanyType {
-  id: string;
+  id: string | null;
   name: string;
-  remark: string;
+  remark?: string;
   createTime?: string;
 }

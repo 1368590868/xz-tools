@@ -114,9 +114,7 @@ export class CompanyService {
     try {
       const res = await request(`/api/corporationDict/deleteBatch`, {
         method: 'POST',
-        data: {
-          id: [id],
-        },
+        data: [id],
       });
       return {
         success: res.code === 0,

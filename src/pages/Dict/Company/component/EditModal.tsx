@@ -19,6 +19,7 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
 
   const [visible, setVisible] = useState(false);
   const [rows, setRows] = useState<CompanyType>({ id: '', name: '', remark: '' });
+  const title = rows.id ? '修改公司名称' : '新增公司名称';
 
   const showModal = (record: CompanyType) => {
     setRows(record);
@@ -37,7 +38,7 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
       if (!rows.id) {
         res = await CompanyService.addCompany(values);
       } else {
-        res = await CompanyService.updateCompany(rows.id, values);
+        res = await CompanyService.updateCompany({ ...values, id: rows.id });
       }
 
       if (res.success) {
@@ -51,7 +52,7 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
   };
 
   return (
-    <Modal title="修改公司名称" open={visible} onOk={doUpdate} onCancel={() => setVisible(false)}>
+    <Modal title={title} open={visible} onOk={doUpdate} onCancel={() => setVisible(false)}>
       <Form form={form} labelCol={{ span: 4 }}>
         <Form.Item
           label="公司名称"
