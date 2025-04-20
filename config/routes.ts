@@ -16,7 +16,8 @@ export default [
     layout: false,
     routes: [
       {
-        name: 'login',
+        name: '登录',
+        locale: false,
         path: '/user/login',
         component: './User/Login',
       },
@@ -24,15 +25,16 @@ export default [
   },
   {
     path: '/welcome',
-    name: 'welcome',
+    name: '欢迎',
+    locale: false,
     icon: 'smile',
     component: './Welcome',
   },
   {
     path: '/admin',
-    name: 'admin',
+    name: '管理页',
+    locale: false,
     icon: 'crown',
-    access: 'canAdmin',
     routes: [
       {
         path: '/admin',
@@ -40,16 +42,25 @@ export default [
       },
       {
         path: '/admin/sub-page',
-        name: 'sub-page',
+        name: '子页面',
         component: './Admin',
+        locale: false,
       },
     ],
   },
   {
-    name: 'list.table-list',
+    path: '/dict',
+    name: '字典配置',
     icon: 'table',
-    path: '/list',
-    component: './TableList',
+    locale: false,
+    routes: [
+      {
+        path: '/dict/company',
+        name: '公司名称',
+        locale: false,
+        component: './Dict/Company',
+      },
+    ],
   },
   {
     path: '/',
