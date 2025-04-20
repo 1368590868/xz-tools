@@ -32,28 +32,36 @@ declare namespace API {
   type PageParams = {
     current?: number;
     pageSize?: number;
+    tags: string[] | never[];
   };
 
-  type RuleListItem = {
-    key?: number;
-    disabled?: boolean;
-    href?: string;
-    avatar?: string;
-    name?: string;
-    owner?: string;
-    desc?: string;
-    callNo?: number;
-    status?: number;
-    updatedAt?: string;
-    createdAt?: string;
-    progress?: number;
+  type ArticleList = {
+    id: any;
+    data: { id: string; title: string }[];
+    total: number;
   };
 
-  type RuleList = {
-    data?: RuleListItem[];
-    /** 列表的内容总数 */
-    total?: number;
-    success?: boolean;
+  type DeleteArticle = {
+    success: boolean;
+  };
+
+  type ArticleDetail = {
+    title: string;
+    content?: string;
+    markdown: string;
+    cover_image?: string;
+    tags: TagList[];
+  };
+
+  type TagList = { id: string; name: string; color: string };
+
+  type ImageRes = {
+    url: string;
+  };
+
+  type ApiResponse<T> = {
+    data: T;
+    code: number;
   };
 
   type FakeCaptcha = {
@@ -98,4 +106,6 @@ declare namespace API {
     description?: string;
     type?: NoticeIconItemType;
   };
+
+  type TagList = { id: string; name: string };
 }
