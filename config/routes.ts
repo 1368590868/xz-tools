@@ -60,6 +60,18 @@ export default [
         locale: false,
         component: './Dict/Company',
       },
+      {
+        path: '/dict/bank',
+        name: '银行名称',
+        locale: false,
+        component: './Dict/Bank',
+      },
+      {
+        path: '/dict/otherCompany',
+        name: '对手方名称',
+        locale: false,
+        component: './Dict/OtherCompany',
+      },
     ],
   },
   {

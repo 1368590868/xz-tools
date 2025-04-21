@@ -1,20 +1,20 @@
 /* eslint-disable no-undef */
-import { CompanyService } from '@/services';
+import { BankService } from '@/services';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { Button, message, Popconfirm } from 'antd';
 import { useRef } from 'react';
 import EditModal, { EditModalRef } from './component/EditModal';
-import { CompanyType } from './type';
-const Company: React.FC = () => {
+import { BankType } from './type';
+const Bank: React.FC = () => {
   const actionRef = useRef<ActionType>();
 
   const modalRef = useRef<EditModalRef | null>(null);
 
   const onDelete = async (id: string) => {
     try {
-      const res = await CompanyService.deleteCompany(id);
+      const res = await BankService.deleteCompany(id);
       if (res.success) {
         message.success('删除成功');
         actionRef.current?.reload();
@@ -24,7 +24,7 @@ const Company: React.FC = () => {
     }
   };
 
-  const columns: ProColumns<CompanyType>[] = [
+  const columns: ProColumns<BankType>[] = [
     {
       title: '序号',
       dataIndex: 'index',
@@ -40,11 +40,31 @@ const Company: React.FC = () => {
       },
     },
     {
-      title: '公司名称',
+      title: '银行名称',
       align: 'center',
       dataIndex: 'name',
       ellipsis: true,
       hideInSearch: false,
+    },
+    {
+      title: '银行卡号',
+      align: 'center',
+      dataIndex: 'cardNumber',
+      ellipsis: true,
+      copyable: true,
+      hideInSearch: false,
+      valueType: 'text',
+      formItemProps: {
+        // 使用 getValueFromEvent 在值更新到 Form state 之前进行处理
+        getValueFromEvent: (event: React.ChangeEvent<HTMLInputElement>) => {
+          const { value } = event.target;
+          // 1. 移除非数字字符
+          const numericValue = value.replace(/[^0-9]/g, '');
+          // 2. 截断超过19位的数字 (实时限制最大长度)
+          //    注意：这里只处理最大长度，最小长度的校验还是依赖 rules
+          return numericValue.slice(0, 19);
+        },
+      },
     },
     {
       title: '备注',
@@ -88,7 +108,7 @@ const Company: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<CompanyType, API.PageParams>
+      <ProTable<BankType, API.PageParams>
         actionRef={actionRef}
         rowKey="id"
         search={{
@@ -102,13 +122,18 @@ const Company: React.FC = () => {
             type="primary"
             key="primary"
             onClick={() => {
-              modalRef.current?.showModal({ name: '', remark: '', id: null });
+              modalRef.current?.showModal({
+                name: '',
+                remark: '',
+                id: null,
+                cardNumber: undefined,
+              });
             }}
           >
             <PlusOutlined /> 新增
           </Button>,
         ]}
-        request={CompanyService.getCompanyList<CompanyType>}
+        request={BankService.getCompanyList<BankType>}
         columns={columns}
       />
 
@@ -117,4 +142,4 @@ const Company: React.FC = () => {
   );
 };
 
-export default Company;
+export default Bank;
