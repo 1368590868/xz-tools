@@ -72,6 +72,12 @@ export default [
         locale: false,
         component: './Dict/OtherCompany',
       },
+      {
+        path: '/dict/businessType',
+        name: '业务类型',
+        locale: false,
+        component: './Dict/BusinessType',
+      },
     ],
   },
   {

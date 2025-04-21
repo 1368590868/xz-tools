@@ -1,20 +1,20 @@
 /* eslint-disable no-undef */
-import { OtherCompanyService } from '@/services';
+import { BusinessService } from '@/services';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { Button, message, Popconfirm } from 'antd';
 import { useRef } from 'react';
 import EditModal, { EditModalRef } from './component/EditModal';
-import { OtherCompanyType } from './type';
-const OtherCompany: React.FC = () => {
+import { BusinessType } from './type';
+const Business: React.FC = () => {
   const actionRef = useRef<ActionType>();
 
   const modalRef = useRef<EditModalRef | null>(null);
 
   const onDelete = async (id: string) => {
     try {
-      const res = await OtherCompanyService.deleteCompany(id);
+      const res = await BusinessService.deleteCompany(id);
       if (res.success) {
         message.success('删除成功');
         actionRef.current?.reload();
@@ -24,7 +24,7 @@ const OtherCompany: React.FC = () => {
     }
   };
 
-  const columns: ProColumns<OtherCompanyType>[] = [
+  const columns: ProColumns<BusinessType>[] = [
     {
       title: '序号',
       dataIndex: 'index',
@@ -40,26 +40,11 @@ const OtherCompany: React.FC = () => {
       },
     },
     {
-      title: '对手方名称',
+      title: '业务类型名称',
       align: 'center',
       dataIndex: 'name',
       ellipsis: true,
       hideInSearch: false,
-    },
-    {
-      title: '银行名称',
-      align: 'center',
-      dataIndex: 'bankName',
-      ellipsis: true,
-      hideInSearch: false,
-    },
-    {
-      title: '银行卡号',
-      align: 'center',
-      dataIndex: 'cardNumber',
-      ellipsis: true,
-      hideInSearch: false,
-      copyable: true,
     },
     {
       title: '备注',
@@ -86,7 +71,7 @@ const OtherCompany: React.FC = () => {
         </Button>,
         <Popconfirm
           key={'delete'}
-          title="确定删除当前对手方名称吗？"
+          title="确定删除当前公司名称吗？"
           description=""
           onConfirm={() => onDelete(record.id || '')}
           onCancel={() => {}}
@@ -103,7 +88,7 @@ const OtherCompany: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<OtherCompanyType, API.PageParams>
+      <ProTable<BusinessType, API.PageParams>
         actionRef={actionRef}
         rowKey="id"
         search={{
@@ -117,13 +102,13 @@ const OtherCompany: React.FC = () => {
             type="primary"
             key="primary"
             onClick={() => {
-              modalRef.current?.showModal({ name: '', remark: '', id: null, bankId: undefined });
+              modalRef.current?.showModal({ name: '', remark: '', id: null });
             }}
           >
             <PlusOutlined /> 新增
           </Button>,
         ]}
-        request={OtherCompanyService.getCompanyList<OtherCompanyType>}
+        request={BusinessService.getBusinessList<BusinessType>}
         columns={columns}
       />
 
@@ -132,4 +117,4 @@ const OtherCompany: React.FC = () => {
   );
 };
 
-export default OtherCompany;
+export default Business;

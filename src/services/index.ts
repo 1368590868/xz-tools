@@ -352,3 +352,113 @@ export class BankService {
     }
   }
 }
+
+// 业务类型
+export class BusinessService {
+  // 查询银行列表（用于ProTable）
+  static async getBusinessList<T>(params: PageParams): Promise<{
+    data: T[];
+    total: number;
+    success: boolean;
+  }> {
+    try {
+      const { current: pageNum, pageSize, ...rest } = params;
+      const res = await request<{
+        data: {
+          list: T[];
+          total: number;
+        };
+        code: number;
+      }>('/api/businessTypeDict/listPage', {
+        method: 'GET',
+        params: {
+          pageNum,
+          pageSize,
+          ...rest,
+        },
+      });
+
+      return {
+        data: res.data.list || [],
+        total: res.data.total || 0,
+        success: res.code === 0,
+      };
+    } catch (error) {
+      console.error('获取公司列表出错:', error);
+      return {
+        data: [],
+        total: 0,
+        success: false,
+      };
+    }
+  }
+
+  // 添加银行
+  static async addBusiness(data: Omit<BankType, 'id'>): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    try {
+      const res = await request('/api/businessTypeDict/create', {
+        method: 'POST',
+        data,
+      });
+      return {
+        success: res.code === 0,
+        message: res.message || '添加成功',
+      };
+    } catch (error) {
+      console.error('添加公司出错:', error);
+      return {
+        success: false,
+        message: '添加失败',
+      };
+    }
+  }
+
+  // 更新银行
+  static async updateBusiness(data: Partial<BankType>): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    try {
+      const res = await request(`/api/businessTypeDict/modify`, {
+        method: 'POST',
+        data,
+      });
+      return {
+        success: res.code === 0,
+        message: res.message || '更新成功',
+      };
+    } catch (error) {
+      console.error('更新公司出错:', error);
+      return {
+        success: false,
+        message: '更新失败',
+      };
+    }
+  }
+
+  // 删除银行
+  static async deleteCompany(id: string): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    try {
+      const res = await request(`/api/businessTypeDict/deleteBatch`, {
+        method: 'POST',
+        data: [id],
+      });
+      return {
+        success: res.code === 0,
+        message: res.message || '删除成功',
+      };
+    } catch (error) {
+      console.error('删除公司出错:', error);
+      return {
+        success: false,
+        message: '删除失败',
+      };
+    }
+  }
+}
