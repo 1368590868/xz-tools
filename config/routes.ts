@@ -31,22 +31,11 @@ export default [
     component: './Welcome',
   },
   {
-    path: '/admin',
-    name: '管理页',
+    path: '/enterTheDetail',
+    name: '交易明细',
     locale: false,
     icon: 'crown',
-    routes: [
-      {
-        path: '/admin',
-        redirect: '/admin/sub-page',
-      },
-      {
-        path: '/admin/sub-page',
-        name: '子页面',
-        component: './Admin',
-        locale: false,
-      },
-    ],
+    component: './EnterTheDetail',
   },
   {
     path: '/dict',
@@ -54,6 +43,10 @@ export default [
     icon: 'table',
     locale: false,
     routes: [
+      {
+        path: '/dict',
+        redirect: '/dict/company',
+      },
       {
         path: '/dict/company',
         name: '公司名称',

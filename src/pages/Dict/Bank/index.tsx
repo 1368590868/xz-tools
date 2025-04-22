@@ -142,7 +142,7 @@ const Bank: React.FC = () => {
             <PlusOutlined /> 新增
           </Button>,
         ]}
-        request={BankService.getCompanyList<BankType>}
+        request={BankService.getBankList<BankType>}
         columns={columns}
         columnEmptyText=""
         bordered

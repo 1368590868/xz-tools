@@ -3,6 +3,7 @@
 import { BankType } from '@/pages/Dict/Bank/type';
 import { CompanyType } from '@/pages/Dict/Company/type';
 import { OtherCompanyType } from '@/pages/Dict/OtherCompany/type';
+import { EnterFormType } from '@/pages/EnterTheDetail/type';
 import { request } from '@umijs/max';
 
 // 分页参数类型定义
@@ -246,7 +247,7 @@ export class OtherCompanyService {
 
 export class BankService {
   // 查询银行列表（用于ProTable）
-  static async getCompanyList<T>(params: PageParams): Promise<{
+  static async getBankList<T>(params: PageParams): Promise<{
     data: T[];
     total: number;
     success: boolean;
@@ -446,6 +447,118 @@ export class BusinessService {
   }> {
     try {
       const res = await request(`/api/businessTypeDict/deleteBatch`, {
+        method: 'POST',
+        data: [id],
+      });
+      return {
+        success: res.code === 0,
+        message: res.message || '删除成功',
+      };
+    } catch (error) {
+      console.error('删除公司出错:', error);
+      return {
+        success: false,
+        message: '删除失败',
+      };
+    }
+  }
+}
+
+// 录入明细
+export class EnterTheDetailService {
+  // 查询银行列表（用于ProTable）
+  static async getList<T>(params: PageParams): Promise<{
+    data: T[];
+    total: number;
+    success: boolean;
+  }> {
+    try {
+      const { current: pageNum, pageSize, ...rest } = params;
+      const res = await request<{
+        data: {
+          list: T[];
+          total: number;
+        };
+        code: number;
+      }>('/api/enterTheDetails/listPage', {
+        method: 'GET',
+        params: {
+          pageNum,
+          pageSize,
+          ...rest,
+          // 搜索年份没有值时，默认显示当前年份
+          tradeDateYear: rest.tradeDateYear || new Date().getFullYear(),
+        },
+      });
+
+      return {
+        data: res.data.list || [],
+        total: res.data.total || 0,
+        success: res.code === 0,
+      };
+    } catch (error) {
+      console.error('获取公司列表出错:', error);
+      return {
+        data: [],
+        total: 0,
+        success: false,
+      };
+    }
+  }
+
+  // 添加银行
+  static async add(data: Omit<EnterFormType, 'id'>): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    try {
+      const res = await request('/api/enterTheDetails/create', {
+        method: 'POST',
+        data,
+      });
+      return {
+        success: res.code === 0,
+        message: res.message || '添加成功',
+      };
+    } catch (error) {
+      console.error('添加公司出错:', error);
+      return {
+        success: false,
+        message: '添加失败',
+      };
+    }
+  }
+
+  // 更新银行
+  static async update(data: Partial<BankType>): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    try {
+      const res = await request(`/api/enterTheDetails/modify`, {
+        method: 'POST',
+        data,
+      });
+      return {
+        success: res.code === 0,
+        message: res.message || '更新成功',
+      };
+    } catch (error) {
+      console.error('更新公司出错:', error);
+      return {
+        success: false,
+        message: '更新失败',
+      };
+    }
+  }
+
+  // 删除银行
+  static async delete(id: string): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    try {
+      const res = await request(`/api/enterTheDetails/deleteBatch`, {
         method: 'POST',
         data: [id],
       });

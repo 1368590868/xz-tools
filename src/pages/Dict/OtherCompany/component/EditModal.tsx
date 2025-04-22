@@ -54,7 +54,7 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
 
   const [bankList, setBankList] = useState<BankType[]>([]);
   const getBankList = async () => {
-    const res = await BankService.getCompanyList<BankType>({ pageSize: 99999, current: 1 });
+    const res = await BankService.getBankList<BankType>({ pageSize: 99999, current: 1 });
     console.log(res);
     if (res.success) {
       setBankList(res.data);

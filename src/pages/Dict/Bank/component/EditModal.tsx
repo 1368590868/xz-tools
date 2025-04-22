@@ -78,13 +78,7 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
             },
           ]}
         >
-          <InputNumber
-            placeholder="请填写期初余额"
-            addonAfter="元"
-            stringMode
-            min="0"
-            precision={2}
-          />
+          <InputNumber placeholder="请填写期初余额" suffix="元" stringMode min="0" precision={2} />
         </Form.Item>
         <Form.Item
           label="银行卡号"
