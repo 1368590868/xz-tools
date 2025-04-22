@@ -1,8 +1,9 @@
 import { BankService } from '@/services';
 import { ActionType } from '@ant-design/pro-components';
-import { Form, Input, message, Modal } from 'antd';
+import { Form, Input, InputNumber, message, Modal } from 'antd';
 import React, { useImperativeHandle, useState } from 'react';
 import { BankType } from '../type';
+import './index.module.less';
 
 interface Props {
   ref: any;
@@ -65,6 +66,25 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
           ]}
         >
           <Input placeholder="请填写银行名称" />
+        </Form.Item>
+        <Form.Item
+          style={{ width: '100%' }}
+          label="期初余额"
+          name="initialValue"
+          rules={[
+            {
+              required: true,
+              message: '请填写期初余额',
+            },
+          ]}
+        >
+          <InputNumber
+            placeholder="请填写期初余额"
+            addonAfter="元"
+            stringMode
+            min="0"
+            precision={2}
+          />
         </Form.Item>
         <Form.Item
           label="银行卡号"

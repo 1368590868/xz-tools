@@ -110,6 +110,8 @@ const Company: React.FC = () => {
         ]}
         request={CompanyService.getCompanyList<CompanyType>}
         columns={columns}
+        columnEmptyText=""
+        bordered
       />
 
       <EditModal ref={modalRef} actionRef={actionRef}></EditModal>

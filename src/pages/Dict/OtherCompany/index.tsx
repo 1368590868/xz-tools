@@ -9,7 +9,6 @@ import EditModal, { EditModalRef } from './component/EditModal';
 import { OtherCompanyType } from './type';
 const OtherCompany: React.FC = () => {
   const actionRef = useRef<ActionType>();
-
   const modalRef = useRef<EditModalRef | null>(null);
 
   const onDelete = async (id: string) => {
@@ -125,6 +124,8 @@ const OtherCompany: React.FC = () => {
         ]}
         request={OtherCompanyService.getCompanyList<OtherCompanyType>}
         columns={columns}
+        columnEmptyText=""
+        bordered
       />
 
       <EditModal ref={modalRef} actionRef={actionRef}></EditModal>

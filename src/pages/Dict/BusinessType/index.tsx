@@ -71,7 +71,7 @@ const Business: React.FC = () => {
         </Button>,
         <Popconfirm
           key={'delete'}
-          title="确定删除当前公司名称吗？"
+          title="确定删除当前业务类型吗？"
           description=""
           onConfirm={() => onDelete(record.id || '')}
           onCancel={() => {}}
@@ -110,6 +110,8 @@ const Business: React.FC = () => {
         ]}
         request={BusinessService.getBusinessList<BusinessType>}
         columns={columns}
+        columnEmptyText=""
+        bordered
       />
 
       <EditModal ref={modalRef} actionRef={actionRef}></EditModal>

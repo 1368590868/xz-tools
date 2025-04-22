@@ -7,6 +7,7 @@ import { Button, message, Popconfirm } from 'antd';
 import { useRef } from 'react';
 import EditModal, { EditModalRef } from './component/EditModal';
 import { BankType } from './type';
+
 const Bank: React.FC = () => {
   const actionRef = useRef<ActionType>();
 
@@ -45,6 +46,14 @@ const Bank: React.FC = () => {
       dataIndex: 'name',
       ellipsis: true,
       hideInSearch: false,
+    },
+    {
+      title: '期初余额',
+      align: 'center',
+      dataIndex: 'initialValue',
+      ellipsis: true,
+      hideInSearch: true,
+      width: 150,
     },
     {
       title: '银行卡号',
@@ -91,7 +100,7 @@ const Bank: React.FC = () => {
         </Button>,
         <Popconfirm
           key={'delete'}
-          title="确定删除当前公司名称吗？"
+          title="确定删除当前银行名称吗？"
           description=""
           onConfirm={() => onDelete(record.id || '')}
           onCancel={() => {}}
@@ -135,6 +144,8 @@ const Bank: React.FC = () => {
         ]}
         request={BankService.getCompanyList<BankType>}
         columns={columns}
+        columnEmptyText=""
+        bordered
       />
 
       <EditModal ref={modalRef} actionRef={actionRef}></EditModal>
