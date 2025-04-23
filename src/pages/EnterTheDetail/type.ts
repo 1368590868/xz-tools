@@ -15,15 +15,15 @@ export type TransactionType = 'income' | 'expense';
 
 export interface EnterFormType {
   id: string | null;
-  tradeDate: string | Moment;
-  bankId: string;
-  corporationId: string;
-  businessTypeId: string;
-  otherCorporationId: string;
+  tradeDate?: string | Moment;
+  bankId?: string;
+  corporationId?: string;
+  businessTypeId?: string;
+  otherCorporationId?: string;
   incomeAmount?: string;
   expenseAmount?: string;
-  transactionType: TransactionType;
-  amount: string;
+  transactionType?: TransactionType;
+  amount?: string;
   remark?: string;
 }
 
@@ -32,4 +32,10 @@ export interface OptionsListType {
   otherCompanyList: OtherCompanyType[];
   bankList: BankType[];
   businessList: BusinessType[];
+}
+
+export type SegmentedType = 'single' | 'multiple';
+
+export interface MultipleRef {
+  onOk: () => void;
 }

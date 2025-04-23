@@ -1,29 +1,15 @@
 import type { FormInstance } from 'antd';
 import { DatePicker, Form, Input, InputNumber, Radio, Select } from 'antd';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { EnterFormType, OptionsListType } from '../type';
 import './index.module.less';
 
 interface AddFormProps {
   form: FormInstance<EnterFormType>;
-  id: null | string;
   optionsList: OptionsListType;
 }
 
-const AddForm: React.FC<AddFormProps> = ({ form, id, optionsList }) => {
-  useEffect(() => {
-    if (!!id) {
-      const incomeAmount = form.getFieldValue('incomeAmount');
-      const expenseAmount = form.getFieldValue('expenseAmount');
-
-      if (incomeAmount && !expenseAmount) {
-        form.setFieldsValue({ transactionType: 'income' });
-      } else if (!incomeAmount && expenseAmount) {
-        form.setFieldsValue({ transactionType: 'expense' });
-      }
-    }
-  }, [id]);
-
+const AddForm: React.FC<AddFormProps> = ({ form, optionsList }) => {
   return (
     <Form form={form} labelCol={{ span: 4 }}>
       <Form.Item

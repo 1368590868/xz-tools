@@ -1,10 +1,12 @@
 import { EnterTheDetailService } from '@/services';
 import { ActionType } from '@ant-design/pro-components';
 import { Form, message, Modal, Segmented } from 'antd';
+import { SegmentedValue } from 'antd/es/segmented';
 import moment from 'moment';
-import React, { useImperativeHandle, useState } from 'react';
-import { EnterFormType, EnterTheDetailType, OptionsListType } from '../type';
+import React, { useImperativeHandle, useRef, useState } from 'react';
+import { EnterFormType, MultipleRef, OptionsListType, SegmentedType } from '../type';
 import AddForm from './AddForm';
+import MultipleForm from './MultipleForm';
 
 interface Props {
   ref: any;
@@ -13,11 +15,12 @@ interface Props {
 }
 
 export interface EditModalRef {
-  showModal: (record: EnterTheDetailType) => void;
+  showModal: (record: EnterFormType) => void;
 }
 
 const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
   const { actionRef } = props;
+  const multipleRef = useRef<MultipleRef>();
   const [form] = Form.useForm<EnterFormType>();
 
   const [visible, setVisible] = useState(false);
@@ -37,10 +40,26 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
   const title = rows.id ? '修改交易' : '新增交易';
 
   const showModal = (record: EnterFormType) => {
+    form.resetFields();
     setRows(record);
     setVisible(true);
-    form.setFieldsValue({ ...record, tradeDate: moment(record.tradeDate) });
-    console.log('record', record);
+    form.setFieldsValue({
+      ...record,
+      tradeDate: moment(record.tradeDate),
+      amount: record.incomeAmount || record.expenseAmount,
+    });
+    // 如果有id，则根据金额判断是收入还是支出
+    if (!!record.id) {
+      const incomeAmount = record.incomeAmount;
+      console.log(incomeAmount);
+
+      form.setFieldValue('transactionType', incomeAmount ? 'income' : 'expense');
+    }
+  };
+
+  const [segmentedType, setSegmentedType] = useState<SegmentedType | SegmentedValue>('single');
+  const onTabChange = (value: SegmentedValue) => {
+    setSegmentedType(value);
   };
 
   useImperativeHandle(ref, () => ({
@@ -49,6 +68,10 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
 
   const doUpdate = async () => {
     try {
+      if (segmentedType === 'multiple') {
+        await multipleRef.current?.onOk();
+        return;
+      }
       const values = await form.validateFields();
       const data = {
         ...values,
@@ -81,14 +104,23 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
       onCancel={() => setVisible(false)}
       width={800}
     >
-      <Segmented
-        options={[
-          { label: '单条新增', value: 'single' },
-          { label: '批量导入', value: 'multiple' },
-        ]}
-      />
-      <div style={{ height: 10 }}></div>
-      <AddForm form={form} id={rows.id} optionsList={props.optionsList} />
+      {!rows.id && (
+        <Segmented
+          value={segmentedType}
+          onChange={onTabChange}
+          style={{ marginBottom: 16 }}
+          options={[
+            { label: '单条新增', value: 'single' },
+            { label: '批量导入', value: 'multiple' },
+          ]}
+        />
+      )}
+
+      {segmentedType === 'single' ? (
+        <AddForm form={form} optionsList={props.optionsList} />
+      ) : (
+        <MultipleForm ref={multipleRef} />
+      )}
     </Modal>
   );
 });

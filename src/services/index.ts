@@ -486,8 +486,6 @@ export class EnterTheDetailService {
           pageNum,
           pageSize,
           ...rest,
-          // 搜索年份没有值时，默认显示当前年份
-          tradeDateYear: rest.tradeDateYear || new Date().getFullYear(),
         },
       });
 
@@ -571,6 +569,30 @@ export class EnterTheDetailService {
       return {
         success: false,
         message: '删除失败',
+      };
+    }
+  }
+
+  // 导出
+  static async export(params: PageParams): Promise<{
+    success: boolean;
+    data: Blob;
+  }> {
+    try {
+      const res = await request(`/api/enterTheDetails/export`, {
+        method: 'GET',
+        params,
+        responseType: 'blob',
+      });
+      return {
+        success: true,
+        data: res,
+      };
+    } catch (error) {
+      console.error('导出出错:', error);
+      return {
+        success: false,
+        data: new Blob(),
       };
     }
   }

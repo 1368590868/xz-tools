@@ -6,8 +6,9 @@ import {
   EnterTheDetailService,
   OtherCompanyService,
 } from '@/services';
-import { PlusOutlined } from '@ant-design/icons';
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
+import { downloadBlobFile } from '@/utils/download';
+import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
+import type { ActionType, ProColumns, ProFormInstance } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { Button, DatePicker, message, Popconfirm, Select } from 'antd';
 import moment from 'moment';
@@ -17,9 +18,10 @@ import { BusinessType } from '../Dict/BusinessType/type';
 import { CompanyType } from '../Dict/Company/type';
 import { OtherCompanyType } from '../Dict/OtherCompany/type';
 import EditModal, { EditModalRef } from './component/EditModal';
-import { EnterTheDetailType } from './type';
+import { EnterFormType } from './type';
 const EnterTheDetail: React.FC = () => {
   const actionRef = useRef<ActionType>();
+  const formRef = useRef<ProFormInstance>();
 
   const modalRef = useRef<EditModalRef | null>(null);
 
@@ -94,7 +96,13 @@ const EnterTheDetail: React.FC = () => {
     getOptions();
   }, []);
 
-  const searchColumns: ProColumns<EnterTheDetailType>[] = [
+  useEffect(() => {
+    if (!formRef.current?.getFieldValue('tradeDateYear')) {
+      formRef.current?.setFieldValue('tradeDateYear', new Date().getFullYear());
+    }
+  }, []);
+
+  const searchColumns: ProColumns<EnterFormType>[] = [
     {
       title: '年',
       align: 'center',
@@ -102,8 +110,9 @@ const EnterTheDetail: React.FC = () => {
       hideInTable: true,
       renderFormItem: () => {
         // @ts-ignore
-        return <DatePicker.YearPicker allowClear={false} defaultValue={moment()} />;
+        return <DatePicker.YearPicker allowClear={false} format="YYYY" />;
       },
+      initialValue: moment(),
       search: {
         transform: (value: any) => moment(value).format('YYYY'),
       },
@@ -224,7 +233,7 @@ const EnterTheDetail: React.FC = () => {
     },
   ];
 
-  const columns: ProColumns<EnterTheDetailType>[] = [
+  const columns: ProColumns<EnterFormType>[] = [
     ...searchColumns,
     {
       title: '序号',
@@ -359,10 +368,24 @@ const EnterTheDetail: React.FC = () => {
     },
   ];
 
+  const onDownload = async () => {
+    const formValues = formRef.current?.getFieldsValue();
+    const res = await EnterTheDetailService.export({
+      ...formValues,
+      tradeDateYear: moment(formValues?.tradeDateYear).format('YYYY'),
+    });
+    if (res.success) {
+      // 文件流下载
+      downloadBlobFile(res.data, '交易明细表.xlsx');
+      message.success('导出成功');
+    }
+  };
+
   return (
     <PageContainer>
-      <ProTable<EnterTheDetailType, API.PageParams>
+      <ProTable<EnterFormType, API.PageParams>
         actionRef={actionRef}
+        formRef={formRef}
         rowKey="id"
         scroll={{ x: 1300 }}
         search={{
@@ -376,13 +399,19 @@ const EnterTheDetail: React.FC = () => {
             type="primary"
             key="primary"
             onClick={() => {
-              modalRef.current?.showModal({ name: '', remark: '', id: null });
+              modalRef.current?.showModal({
+                id: null,
+                transactionType: 'income',
+              });
             }}
           >
             <PlusOutlined /> 新增交易
           </Button>,
+          <Button key="download" onClick={onDownload}>
+            <DownloadOutlined /> 下载
+          </Button>,
         ]}
-        request={EnterTheDetailService.getList<EnterTheDetailType>}
+        request={EnterTheDetailService.getList<EnterFormType>}
         columns={columns}
         columnEmptyText=""
         bordered
