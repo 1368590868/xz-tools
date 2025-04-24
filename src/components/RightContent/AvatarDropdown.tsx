@@ -1,7 +1,7 @@
-import { outLogin } from '@/services/ant-design-pro/api';
+import { UserService } from '@/services';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
-import { Spin } from 'antd';
+import { Form, Input, message, Modal, Spin } from 'antd';
 import { createStyles } from 'antd-style';
 import { stringify } from 'querystring';
 import type { MenuInfo } from 'rc-menu/lib/interface';
@@ -38,12 +38,76 @@ const useStyles = createStyles(({ token }) => {
   };
 });
 
+// 新增修改密码弹窗组件
+const ChangePasswordModal: React.FC<{
+  open: boolean;
+  onCancel: () => void;
+}> = ({ open, onCancel }) => {
+  const [form] = Form.useForm();
+
+  const handleOk = async () => {
+    try {
+      const values = await form.validateFields();
+      // 这里可以调用修改密码的接口
+      const res = await UserService.updatePassword({
+        ...values,
+        account: JSON.parse(sessionStorage.getItem('initState') || '').account,
+      });
+      if (res.success) {
+        message.success('密码修改成功');
+        onCancel();
+        form.resetFields();
+      } else {
+        message.error(res.message);
+      }
+    } catch (e) {}
+  };
+
+  return (
+    <Modal title="修改密码" open={open} onCancel={onCancel} onOk={handleOk} destroyOnClose>
+      <Form form={form} layout="vertical">
+        <Form.Item
+          label="原密码"
+          name="oldPassword"
+          rules={[{ required: true, message: '请输入原密码' }]}
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item
+          label="新密码"
+          name="password"
+          rules={[{ required: true, message: '请输入新密码' }]}
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item
+          label="确认新密码"
+          name="confirmPassword"
+          dependencies={['newPassword']}
+          rules={[
+            { required: true, message: '请确认新密码' },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error('两次输入的新密码不一致!'));
+              },
+            }),
+          ]}
+        >
+          <Input.Password />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+};
+
 export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, children }) => {
   /**
    * 退出登录，并且将当前的 url 保存
    */
   const loginOut = async () => {
-    await outLogin();
     const { search, pathname } = window.location;
     const urlParams = new URL(window.location.href).searchParams;
     /** 此方法会跳转到 redirect 参数所在的位置 */
@@ -61,6 +125,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
   const { styles } = useStyles();
 
   const { initialState, setInitialState } = useModel('@@initialState');
+  const [pwdModalOpen, setPwdModalOpen] = React.useState(false);
 
   const onMenuClick = useCallback(
     (event: MenuInfo) => {
@@ -70,6 +135,10 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
           setInitialState((s) => ({ ...s, currentUser: undefined }));
         });
         loginOut();
+        return;
+      }
+      if (key === 'change-password') {
+        setPwdModalOpen(true); // 打开弹窗
         return;
       }
       history.push(`/account/${key}`);
@@ -112,11 +181,18 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
             icon: <SettingOutlined />,
             label: '个人设置',
           },
+
           {
             type: 'divider' as const,
           },
         ]
       : []),
+    // 新增“修改密码”菜单项
+    {
+      key: 'change-password',
+      icon: <SettingOutlined />,
+      label: '修改密码',
+    },
     {
       key: 'logout',
       icon: <LogoutOutlined />,
@@ -125,14 +201,17 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
   ];
 
   return (
-    <HeaderDropdown
-      menu={{
-        selectedKeys: [],
-        onClick: onMenuClick,
-        items: menuItems,
-      }}
-    >
-      {children}
-    </HeaderDropdown>
+    <>
+      <HeaderDropdown
+        menu={{
+          selectedKeys: [],
+          onClick: onMenuClick,
+          items: menuItems,
+        }}
+      >
+        {children}
+      </HeaderDropdown>
+      <ChangePasswordModal open={pwdModalOpen} onCancel={() => setPwdModalOpen(false)} />
+    </>
   );
 };

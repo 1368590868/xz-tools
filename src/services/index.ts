@@ -597,3 +597,52 @@ export class EnterTheDetailService {
     }
   }
 }
+
+// 用户登录 修改密码
+export class UserService {
+  // 用户登录
+  static async login(data: { account: string; password: string }): Promise<{
+    success: boolean;
+    message: string;
+    data: any;
+  }> {
+    try {
+      const res = await request('/api/user/login', {
+        method: 'POST',
+        data,
+      });
+      return {
+        success: res.code === 0,
+        message: res.message || '登录成功',
+        data: res.data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: '登录失败',
+        data: {},
+      };
+    }
+  }
+  // 修改密码
+  static async updatePassword(data: { oldPassword: string; password: string }): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    try {
+      const res = await request('/api/user/updatePassword', {
+        method: 'POST',
+        data,
+      });
+      return {
+        success: res.code === 0,
+        message: res.message || '修改成功',
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: '修改失败',
+      };
+    }
+  }
+}

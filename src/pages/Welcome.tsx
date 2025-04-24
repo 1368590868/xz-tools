@@ -114,7 +114,7 @@ const Welcome: React.FC = () => {
               color: token.colorTextHeading,
             }}
           >
-            欢迎使用 行展软件
+            行展软件管理系统
           </div>
           <p
             style={{
@@ -126,8 +126,9 @@ const Welcome: React.FC = () => {
               width: '65%',
             }}
           >
-            行展软件 是一个整合了 umi，Ant Design 和 ProComponents
-            的脚手架方案。致力于在设计规范和基础组件的基础上，继续向上构建，提炼出典型模板/业务组件/配套设计资源，进一步提升企业级中后台产品设计研发过程中的『用户』和『设计者』的体验。
+            行展软件是基于 Ant Design Pro、UmiJS、React
+            技术栈开发的企业级中后台管理系统，具备完善的用户权限、交易明细、字典管理、国际化和 Mock
+            支持等功能，适用于企业级数据管理和业务流程数字化场景。
           </p>
           <div
             style={{
@@ -138,21 +139,21 @@ const Welcome: React.FC = () => {
           >
             <InfoCard
               index={1}
-              href="https://umijs.org/docs/introduce/introduce"
-              title="了解 umi"
-              desc="umi 是一个可扩展的企业级前端应用框架,umi 以路由为基础的，同时支持配置式路由和约定式路由，保证路由的功能完备，并以此进行功能扩展。"
+              title="功能模块"
+              href="#"
+              desc="包含用户与权限管理、交易明细管理、字典管理、国际化支持、Mock 支持等核心模块，满足企业日常管理与业务流转需求。"
             />
             <InfoCard
               index={2}
-              title="了解 ant design"
-              href="https://ant.design"
-              desc="antd 是基于 Ant Design 设计体系的 React UI 组件库，主要用于研发企业级中后台产品。"
+              title="技术架构"
+              href="#"
+              desc="采用 React 18 + UmiJS + Ant Design 5.x，结合 TypeScript、Less、antd-style 等现代前端技术，保证系统的高可维护性与扩展性。"
             />
             <InfoCard
               index={3}
-              title="了解 Pro Components"
-              href="https://procomponents.ant.design"
-              desc="ProComponents 是一个基于 Ant Design 做了更高抽象的模板组件，以 一个组件就是一个页面为开发理念，为中后台开发带来更好的体验。"
+              title="适用场景"
+              href="#"
+              desc="适用于企业级中后台管理、数据录入、业务审批、流程管理等多种数字化办公场景，支持多语言和自定义扩展。"
             />
           </div>
         </div>

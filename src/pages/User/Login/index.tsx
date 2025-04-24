@@ -1,4 +1,5 @@
 import { Footer } from '@/components';
+import { UserService } from '@/services';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 import {
   AlipayCircleOutlined,
@@ -113,34 +114,43 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (values: API.LoginParams) => {
+  const handleSubmit = async (values: any) => {
     try {
-      // 直接设置登录成功，跳过API请求
-      const defaultLoginSuccessMessage = intl.formatMessage({
-        id: 'pages.login.success',
-        defaultMessage: '登录成功！',
-      });
-      message.success(defaultLoginSuccessMessage);
+      const res = await UserService.login(values);
 
-      // 模拟一个成功的用户信息，如果没有fetchUserInfo方法，或者不想调用，可以直接设置用户信息
-      flushSync(() => {
-        setInitialState((s) => ({
-          ...s,
-          currentUser: {
-            name: values.username || 'Admin User',
-            avatar:
-              'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
-            userid: '00000001',
-            email: 'admin@example.com',
-            access: 'admin',
-          },
-        }));
-      });
+      if (res.success) {
+        // 直接设置登录成功，跳过API请求
+        const defaultLoginSuccessMessage = intl.formatMessage({
+          id: 'pages.login.success',
+          defaultMessage: '登录成功！',
+        });
+        message.success(defaultLoginSuccessMessage);
 
-      // 重定向到首页或指定页面
-      const urlParams = new URL(window.location.href).searchParams;
-      history.push(urlParams.get('redirect') || '/');
-      return;
+        const currentUser = {
+          name: res.data.fullName || '管理员',
+          avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
+          userid: '00000001',
+          email: 'admin@example.com',
+          access: 'admin',
+          account: res.data.account,
+        };
+        sessionStorage.setItem('initState', JSON.stringify(currentUser));
+
+        // 模拟一个成功的用户信息，如果没有fetchUserInfo方法，或者不想调用，可以直接设置用户信息
+        flushSync(() => {
+          setInitialState((s) => ({
+            ...s,
+            currentUser,
+          }));
+        });
+
+        // 重定向到首页或指定页面
+        const urlParams = new URL(window.location.href).searchParams;
+        history.push(urlParams.get('redirect') || '/');
+        return;
+      } else {
+        message.error(res.message);
+      }
     } catch (error) {
       const defaultLoginFailureMessage = intl.formatMessage({
         id: 'pages.login.failure',
@@ -177,18 +187,10 @@ const Login: React.FC = () => {
           }}
           logo={<img alt="logo" src="/logo.svg" />}
           title="Ant Design"
-          subTitle={intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
+          subTitle={'欢迎使用行展软件'}
           initialValues={{
             autoLogin: true,
           }}
-          actions={[
-            <FormattedMessage
-              key="loginWith"
-              id="pages.login.loginWith"
-              defaultMessage="其他登录方式"
-            />,
-            <ActionIcons key="icons" />,
-          ]}
           onFinish={async (values) => {
             await handleSubmit(values as API.LoginParams);
           }}
@@ -226,7 +228,7 @@ const Login: React.FC = () => {
           {type === 'account' && (
             <>
               <ProFormText
-                name="username"
+                name="account"
                 fieldProps={{
                   size: 'large',
                   prefix: <UserOutlined />,

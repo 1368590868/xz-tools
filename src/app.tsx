@@ -30,15 +30,12 @@ export async function getInitialState(): Promise<{
     }
     return undefined;
   };
-  // 如果不是登录页面，执行
+  // 如果不是登录页面，执行获取用户信息，没有则跳转登录页
   const { location } = history;
   if (location.pathname !== loginPath) {
-    const currentUser = await fetchUserInfo();
-    return {
-      fetchUserInfo,
-      currentUser,
-      settings: defaultSettings as Partial<LayoutSettings>,
-    };
+    if (!sessionStorage.getItem('initState')) {
+      history.push(loginPath);
+    }
   }
   return {
     fetchUserInfo,
@@ -64,7 +61,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     onPageChange: () => {
       const { location } = history;
       // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser && location.pathname !== loginPath) {
+      if (!sessionStorage.getItem('initState') && location.pathname !== loginPath) {
         history.push(loginPath);
       }
     },
