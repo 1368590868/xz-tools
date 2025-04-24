@@ -54,6 +54,7 @@ const Bank: React.FC = () => {
       ellipsis: true,
       hideInSearch: true,
       width: 150,
+      valueType: 'money',
     },
     {
       title: '银行卡号',

@@ -325,6 +325,7 @@ const EnterTheDetail: React.FC = () => {
       ellipsis: true,
       hideInSearch: true,
       width: 180,
+      valueType: 'money',
     },
     {
       title: '支出金额/元',
@@ -333,6 +334,7 @@ const EnterTheDetail: React.FC = () => {
       ellipsis: true,
       hideInSearch: true,
       width: 180,
+      valueType: 'money',
     },
     {
       width: 150,

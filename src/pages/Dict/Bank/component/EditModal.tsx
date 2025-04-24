@@ -68,7 +68,6 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
           <Input placeholder="请填写银行名称" />
         </Form.Item>
         <Form.Item
-          style={{ width: '100%' }}
           label="期初余额"
           name="initialValue"
           rules={[
@@ -78,7 +77,14 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
             },
           ]}
         >
-          <InputNumber placeholder="请填写期初余额" suffix="元" stringMode min="0" precision={2} />
+          <InputNumber
+            style={{ width: '100%' }}
+            placeholder="请填写期初余额"
+            suffix="元"
+            stringMode
+            min="0"
+            precision={2}
+          />
         </Form.Item>
         <Form.Item
           label="银行卡号"
