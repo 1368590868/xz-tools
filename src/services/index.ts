@@ -684,8 +684,48 @@ export class EnterTheDetailService {
       };
     }
   }
-}
 
+  // 获取所有交易日期
+  static async getAllTransactionDates<T>(params: PageParams): Promise<{
+    data: any;
+    total: number;
+    success: boolean;
+  }> {
+    try {
+      const { current: pageNum, pageSize, ...rest } = params;
+      const res = await request<{
+        data: {
+          list: T[];
+          total: number;
+        };
+        code: number;
+      }>('/api/enterTheDetails/getTradeDateList', {
+        method: 'GET',
+        params: {
+          pageNum,
+          pageSize,
+          ...rest,
+        },
+      });
+
+      return {
+        data:
+          res.data.list.map((x) => ({
+            date: x,
+          })) || [],
+        total: res.data.total || 0,
+        success: res.code === 0,
+      };
+    } catch (error) {
+      console.error('获取公司列表出错:', error);
+      return {
+        data: [],
+        total: 0,
+        success: false,
+      };
+    }
+  }
+}
 // 用户登录 修改密码
 export class UserService {
   // 用户登录

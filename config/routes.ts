@@ -27,27 +27,27 @@ export default [
     path: '/welcome',
     name: '看板',
     locale: false,
-    icon: 'smile',
+    icon: 'BarChartOutlined',
     component: './Kanban',
   },
   {
     path: '/days',
     name: '每日报表',
     locale: false,
-    icon: 'table',
+    icon: 'SnippetsOutlined',
     component: './EveryDay',
   },
   {
     path: '/enterTheDetail',
     name: '交易明细',
     locale: false,
-    icon: 'crown',
+    icon: 'DiffOutlined',
     component: './EnterTheDetail',
   },
   {
     path: '/dict',
     name: '字典配置',
-    icon: 'table',
+    icon: 'FileSearchOutlined',
     locale: false,
     routes: [
       {

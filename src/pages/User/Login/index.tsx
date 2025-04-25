@@ -185,9 +185,9 @@ const Login: React.FC = () => {
             minWidth: 280,
             maxWidth: '75vw',
           }}
-          logo={<img alt="logo" src="/logo.svg" />}
-          title="Ant Design"
-          subTitle={'欢迎使用行展软件'}
+          logo={<img alt="logo" height={60} width={60} src="/iconLogo.svg" />}
+          title="行展银行交易台账"
+          subTitle={''}
           initialValues={{
             autoLogin: true,
           }}
@@ -233,10 +233,7 @@ const Login: React.FC = () => {
                   size: 'large',
                   prefix: <UserOutlined />,
                 }}
-                placeholder={intl.formatMessage({
-                  id: 'pages.login.username.placeholder',
-                  defaultMessage: '用户名: admin or user',
-                })}
+                placeholder={'用户名: admin'}
                 rules={[
                   {
                     required: true,
@@ -255,10 +252,7 @@ const Login: React.FC = () => {
                   size: 'large',
                   prefix: <LockOutlined />,
                 }}
-                placeholder={intl.formatMessage({
-                  id: 'pages.login.password.placeholder',
-                  defaultMessage: '密码: ant.design',
-                })}
+                placeholder={'密码'}
                 rules={[
                   {
                     required: true,
