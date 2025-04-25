@@ -25,10 +25,17 @@ export default [
   },
   {
     path: '/welcome',
-    name: '欢迎',
+    name: '看板',
     locale: false,
     icon: 'smile',
-    component: './Welcome',
+    component: './Kanban',
+  },
+  {
+    path: '/days',
+    name: '每日报表',
+    locale: false,
+    icon: 'table',
+    component: './EveryDay',
   },
   {
     path: '/enterTheDetail',

@@ -1,0 +1,192 @@
+.filter-bar {
+  margin-bottom: 24px;
+}
+
+.dashboard-section {
+  margin-bottom: 32px;
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+}
+
+.carousel-container {
+  position: relative;
+  
+  .finance-carousel {
+    .carousel-slide {
+      padding: 8px 0;
+    }
+  }
+
+  .custom-arrow-prev,
+  .custom-arrow-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    z-index: 10;
+    cursor: pointer;
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .custom-arrow-prev {
+    left: -16px;
+  }
+
+  .custom-arrow-next {
+    right: -16px;
+  }
+}
+
+.carousel-dots {
+  bottom: -25px !important;
+  
+  li {
+    button {
+      background: #d9d9d9 !important;
+    }
+    
+    &.slick-active button {
+      background: #1890ff !important;
+    }
+  }
+}
+
+.finance-card {
+  position: relative;
+  padding: 16px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .gauge-container {
+    position: relative;
+    width: 250px;
+    height: 250px;
+
+    .chart-container {
+      width: 100%;
+      height: 100%;
+    }
+
+    // 修改中心样式以匹配图片中的饼图
+    .gauge-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      width: 120px;
+      height: 120px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.05) inset;
+
+      .title {
+        font-size: 12px;
+        color: #8c8c8c;
+        margin-bottom: 4px;
+      }
+
+      .value {
+        font-size: 16px;
+        font-weight: 500;
+        color: #1890ff;
+      }
+    }
+  }
+
+  // 添加饼图图例样式
+  .pie-legend {
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+    width: 100%;
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin: 0 8px;
+      
+      .color-block {
+        width: 12px;
+        height: 12px;
+        border-radius: 2px;
+        margin-right: 4px;
+        
+        &.income {
+          background-color: #4285F4;
+        }
+        
+        &.expense {
+          background-color: #5ECFBA;
+        }
+      }
+      
+      .legend-text {
+        font-size: 12px;
+        color: #595959;
+      }
+    }
+  }
+
+  .finance-details {
+    display: flex;
+    width: 100%;
+    margin-top: auto;
+    padding-top: 16px;
+    
+    .income, .expense {
+      flex: 1;
+      text-align: center;
+      
+      div:first-child {
+        font-size: 12px;
+        color: #8c8c8c;
+        margin-bottom: 4px;
+      }
+      
+      .amount {
+        font-size: 14px;
+        font-weight: 500;
+      }
+      
+      .income-color {
+        color: #4285F4;  // 修改为图片中的蓝色
+      }
+      
+      .expense-color {
+        color: #5ECFBA;  // 修改为图片中的青色
+      }
+    }
+  }
+
+  .card-title {
+    position: absolute;
+    bottom: 16px;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: #595959;
+  }
+}

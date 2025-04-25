@@ -35,6 +35,14 @@ export async function getInitialState(): Promise<{
   if (location.pathname !== loginPath) {
     if (!sessionStorage.getItem('initState')) {
       history.push(loginPath);
+    } else {
+      const currentUser = JSON.parse(sessionStorage.getItem('initState') as string);
+      return {
+        currentUser,
+        loading: false,
+        fetchUserInfo,
+        settings: defaultSettings as Partial<LayoutSettings>,
+      };
     }
   }
   return {
