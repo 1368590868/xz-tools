@@ -1,14 +1,16 @@
-import { downloadBlobFile, parseFileNameParams } from '@/utils/download';
+import { TempEnterTheDetailsService } from '@/services';
+import { downloadBlobFile } from '@/utils/download';
 import { UploadOutlined } from '@ant-design/icons';
 import { request } from '@umijs/max';
 import { Button, Col, message, Row, Typography, Upload } from 'antd';
 import React, { useImperativeHandle, useState } from 'react';
+import { MultipleRef } from '../type';
 
 const { Text, Link } = Typography;
 
-const MultipleForm: React.FC = React.forwardRef((props, ref) => {
+const MultipleForm: React.FC = React.forwardRef<MultipleRef>((props, ref) => {
   const [fileList, setFileList] = useState<any[]>([]);
-  const [failFile, setFailFile] = useState<Blob | undefined>();
+  const [refId, setRefId] = useState<string>('');
   const [result, setResult] = useState<{
     total?: number;
     success?: number;
@@ -16,18 +18,19 @@ const MultipleForm: React.FC = React.forwardRef((props, ref) => {
   }>({});
 
   const onOk = async () => {
-    if (!failFile) {
-      const formData = new FormData();
-      formData.append('file', fileList[0].originFileObj);
-      formData.append('status', '1');
-      await request('/api/enterTheDetails/import', {
-        method: 'POST',
-        data: formData,
-        requestType: 'form',
-        responseType: 'blob',
-      });
+    if (result.fail === 0) {
+      const res = await TempEnterTheDetailsService.save({ refId });
+      if (res.success) {
+        message.success('批量上传成功');
+      }
+      return Promise.resolve();
     } else {
+      if (fileList.length === 0) {
+        message.warning('请上传文件');
+        return Promise.reject();
+      }
       message.warning('请下载失败详情表调整后重新上传');
+      return Promise.reject();
     }
   };
   useImperativeHandle(ref, () => ({
@@ -38,53 +41,45 @@ const MultipleForm: React.FC = React.forwardRef((props, ref) => {
     const formData = new FormData();
     formData.append('file', file);
 
-    try {
-      const response = await request('/api/enterTheDetails/import', {
-        method: 'POST',
-        data: formData,
-        requestType: 'form',
-        responseType: 'blob',
-        getResponse: true,
-      });
+    const res = await request('/api/tempEnterTheDetails/import', {
+      method: 'POST',
+      data: formData,
+      requestType: 'form',
+    });
 
-      // 获取响应头
-      const contentDisposition = parseFileNameParams(response.headers['content-disposition']);
+    console.log(res, 'res2222');
 
-      setResult((prev) => {
-        return {
-          ...prev,
-          total: contentDisposition?.params.total,
-          success: contentDisposition?.params.success,
-          fail: contentDisposition?.params.failed,
-        };
-      });
-      // 👇 判断返回是否为有效 Blob（即上传成功）
-      if (response.data instanceof Blob && response.data.size > 0) {
-        message.success(`${file.name} 上传成功`);
+    setResult((prev) => {
+      return {
+        ...prev,
+        total: res.data.total,
+        success: res.data.success,
+        fail: res.data.failed,
+      };
+    });
+    // 👇 判断返回是否为有效 Blob（即上传成功）
+    if (res.code === 0) {
+      message.success(`${file.name} 上传成功`);
 
-        // ✅ 更新 fileList 手动添加文件（并标记 status）
-        setFileList(() => [
-          {
-            uid: file.uid,
-            name: file.name,
-            status: 'done',
-            originFileObj: file,
-          },
-        ]);
-        setFailFile(response.data);
-      } else {
-        const errorText = await response.data.text?.();
-        throw new Error(errorText || '上传失败，返回非文件流');
-      }
-    } catch (error: any) {
-      message.error(`${file.name} 上传失败：${error.message || '未知错误'}`);
-      setFileList([]);
+      // ✅ 更新 fileList 手动添加文件（并标记 status）
+      setFileList(() => [
+        {
+          uid: file.uid,
+          name: file.name,
+          status: 'done',
+          originFileObj: file,
+        },
+      ]);
+      setRefId(res.data.refId);
+    } else {
+      message.error(`${file.name} 上传失败`);
     }
   };
 
   // 下载失败详情
-  const handleDownloadFail = () => {
-    downloadBlobFile(failFile!, '失败详情.xlsx');
+  const handleDownloadFail = async () => {
+    const res = await TempEnterTheDetailsService.export({ refId });
+    downloadBlobFile(res.data, '失败详情.xlsx');
   };
 
   return (
@@ -134,12 +129,14 @@ const MultipleForm: React.FC = React.forwardRef((props, ref) => {
           <Text>
             总条数{result.total}条，识别成功{result.success}条，
             <Text type={result.fail ? 'danger' : undefined}>识别失败{result.fail}条</Text>
-            ，请下载失败详情表调整后重新上传。
+            {result.fail === 0 ? '' : '，请下载失败详情表调整后重新上传。'}
           </Text>
           <div style={{ marginBottom: 16 }}></div>
-          <Button type="primary" danger ghost onClick={handleDownloadFail}>
-            下载失败详情
-          </Button>
+          {result.fail !== 0 && (
+            <Button type="primary" danger ghost onClick={handleDownloadFail}>
+              下载失败详情
+            </Button>
+          )}
         </div>
       )}
       <div style={{ margin: 16, color: '#888' }}>

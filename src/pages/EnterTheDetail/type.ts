@@ -20,10 +20,10 @@ export interface EnterFormType {
   corporationId?: string;
   businessTypeId?: string;
   otherCorporationId?: string;
-  incomeAmount?: string;
-  expenseAmount?: string;
+  incomeAmount?: string | null;
+  expenseAmount?: string | null;
   transactionType?: TransactionType;
-  amount?: string;
+  amount?: string | null;
   remark?: string;
 }
 
@@ -37,5 +37,5 @@ export interface OptionsListType {
 export type SegmentedType = 'single' | 'multiple';
 
 export interface MultipleRef {
-  onOk: () => void;
+  onOk: () => Promise<void>;
 }

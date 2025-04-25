@@ -7,18 +7,11 @@ import type {
 import type { ComposeOption } from 'echarts/core';
 import * as echarts from 'echarts/core';
 import React, { useEffect, useRef } from 'react';
+import { AccountData } from '..';
 
 type ECOption = ComposeOption<
   PieSeriesOption | TitleComponentOption | TooltipComponentOption | LegendComponentOption
 >;
-
-interface AccountData {
-  id: number;
-  title: string;
-  currentBalance: number;
-  income: number;
-  expense: number;
-}
 
 interface AccountCardProps {
   item: AccountData;
@@ -36,10 +29,9 @@ const AccountCard: React.FC<AccountCardProps> = ({ item }) => {
         series: [
           {
             type: 'pie',
-            radius: ['70%', '85%'],
+            radius: ['65%', '80%'],
             avoidLabelOverlap: false,
-            startAngle: 90,
-            endAngle: -270,
+
             center: ['50%', '50%'],
             itemStyle: {
               color: (params) => {
@@ -51,32 +43,32 @@ const AccountCard: React.FC<AccountCardProps> = ({ item }) => {
             label: {
               show: true,
               position: 'outside',
-              formatter: '{b}  {c}元',
+              formatter: '{b} \n {c}元',
               fontSize: 12,
               color: '#595959',
               lineHeight: 15,
               align: 'center',
-              overflow: 'break', // ✅ 防止被裁剪
+              //   overflow: 'break', // ✅ 防止被裁剪
             },
             labelLine: {
               show: true,
 
-              length: 5, // ✅ 增加长度
-              length2: 5, // ✅ 增加第二段长度
+              length: 8, // ✅ 增加长度
+              length2: 8, // ✅ 增加第二段长度
               smooth: true,
             },
 
             data: [
-              { value: item.income, name: '收入' },
-              { value: item.expense, name: '支出' },
+              { value: item.incomeAmount, name: '收入' },
+              { value: item.expenseAmount, name: '支出' },
             ],
           },
         ],
         grid: {
-          top: 30,
-          bottom: 30,
-          left: 20,
-          right: 20,
+          top: 100,
+          bottom: 100,
+          left: 100,
+          right: 100,
         },
       };
 
@@ -94,11 +86,11 @@ const AccountCard: React.FC<AccountCardProps> = ({ item }) => {
         <div ref={chartRef} className="chart-container"></div>
         <div className="gauge-center">
           <div className="title">当前余额(元)</div>
-          <div className="value">¥ {item.currentBalance.toFixed(2)}</div>
+          <div className="value">¥ {(+item.balance).toFixed(2)}</div>
         </div>
       </div>
 
-      <div className="card-title">{item.title}</div>
+      <div className="card-title">{item.corporationName + '-' + item.bankName}</div>
     </div>
   );
 };

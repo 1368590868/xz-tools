@@ -7,24 +7,17 @@ import type {
 import type { ComposeOption } from 'echarts/core';
 import * as echarts from 'echarts/core';
 import React, { useEffect, useRef } from 'react';
+import { OtherType } from '..';
 
 type ECOption = ComposeOption<
   PieSeriesOption | TitleComponentOption | TooltipComponentOption | LegendComponentOption
 >;
 
-interface CounterpartyData {
-  id: number;
-  title: string;
-  transactionCount: number;
-  income: number;
-  expense: number;
+interface AccountCardProps {
+  item: OtherType;
 }
 
-interface CounterpartyCardProps {
-  item: CounterpartyData;
-}
-
-const CounterpartyCard: React.FC<CounterpartyCardProps> = ({ item }) => {
+const CounterPartyCard: React.FC<AccountCardProps> = ({ item }) => {
   const chartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -36,10 +29,9 @@ const CounterpartyCard: React.FC<CounterpartyCardProps> = ({ item }) => {
         series: [
           {
             type: 'pie',
-            radius: ['65%', '85%'],
+            radius: ['65%', '80%'],
             avoidLabelOverlap: false,
-            startAngle: 90,
-            endAngle: -270,
+
             center: ['50%', '50%'],
             itemStyle: {
               color: (params) => {
@@ -51,7 +43,7 @@ const CounterpartyCard: React.FC<CounterpartyCardProps> = ({ item }) => {
             label: {
               show: true,
               position: 'outside',
-              formatter: '{b}\n{c}元',
+              formatter: '{b} \n {c}元',
               fontSize: 12,
               color: '#595959',
               lineHeight: 15,
@@ -59,16 +51,24 @@ const CounterpartyCard: React.FC<CounterpartyCardProps> = ({ item }) => {
             },
             labelLine: {
               show: true,
-              length: 15,
-              length2: 10,
+
+              length: 8, // ✅ 增加长度
+              length2: 8, // ✅ 增加第二段长度
               smooth: true,
             },
+
             data: [
-              { value: item.income, name: '收入' },
-              { value: item.expense, name: '支出' },
+              { value: item.incomeAmount, name: '收入' },
+              { value: item.expenseAmount, name: '支出' },
             ],
           },
         ],
+        grid: {
+          top: 100,
+          bottom: 100,
+          left: 100,
+          right: 100,
+        },
       };
 
       chartInstance.setOption(option);
@@ -85,32 +85,13 @@ const CounterpartyCard: React.FC<CounterpartyCardProps> = ({ item }) => {
         <div ref={chartRef} className="chart-container"></div>
         <div className="gauge-center">
           <div className="title">交易笔数</div>
-          <div className="value">{item.transactionCount}</div>
+          <div className="value"> {+item.number}</div>
         </div>
       </div>
-      <div className="pie-legend">
-        <div className="legend-item">
-          <div className="color-block income"></div>
-          <span className="legend-text">收入</span>
-        </div>
-        <div className="legend-item">
-          <div className="color-block expense"></div>
-          <span className="legend-text">支出</span>
-        </div>
-      </div>
-      <div className="finance-details">
-        <div className="income">
-          <div>收入（元）</div>
-          <div className="amount income-color">¥ {item.income.toFixed(2)}</div>
-        </div>
-        <div className="expense">
-          <div>支出（元）</div>
-          <div className="amount expense-color">¥ {item.expense.toFixed(2)}</div>
-        </div>
-      </div>
-      <div className="card-title">{item.title}</div>
+
+      <div className="card-title">{item.otherCorporationName}</div>
     </div>
   );
 };
 
-export default CounterpartyCard;
+export default CounterPartyCard;

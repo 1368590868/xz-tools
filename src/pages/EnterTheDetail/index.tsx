@@ -395,6 +395,7 @@ const EnterTheDetail: React.FC = () => {
         }}
         pagination={{
           defaultPageSize: 10,
+          showSizeChanger: true,
         }}
         toolBarRender={() => [
           <Button

@@ -122,7 +122,7 @@ const AddForm: React.FC<AddFormProps> = ({ form, optionsList }) => {
           placeholder="请填写交易金额"
           suffix="元"
           stringMode
-          min="0"
+          min={1}
           precision={2}
         />
       </Form.Item>

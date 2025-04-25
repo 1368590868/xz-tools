@@ -20,9 +20,9 @@ export interface EditModalRef {
 
 const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
   const { actionRef } = props;
-  const multipleRef = useRef<MultipleRef>();
+  const multipleRef = useRef<MultipleRef>(null);
   const [form] = Form.useForm<EnterFormType>();
-
+  const [segmentedType, setSegmentedType] = useState<SegmentedType | SegmentedValue>('single');
   const [visible, setVisible] = useState(false);
   const [rows, setRows] = useState<EnterFormType>({
     id: '',
@@ -40,6 +40,8 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
   const title = rows.id ? '修改交易' : '新增交易';
 
   const showModal = (record: EnterFormType) => {
+    // 初始setSegmentedType
+    setSegmentedType('single');
     form.resetFields();
     setRows(record);
     setVisible(true);
@@ -57,7 +59,6 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
     }
   };
 
-  const [segmentedType, setSegmentedType] = useState<SegmentedType | SegmentedValue>('single');
   const onTabChange = (value: SegmentedValue) => {
     setSegmentedType(value);
   };
@@ -69,15 +70,18 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
   const doUpdate = async () => {
     try {
       if (segmentedType === 'multiple') {
-        await multipleRef.current?.onOk();
+        await multipleRef.current?.onOk().then(() => {
+          setVisible(false);
+          actionRef.current?.reload(true);
+        });
         return;
       }
       const values = await form.validateFields();
       const data = {
         ...values,
         tradeDate: moment(values.tradeDate).format('YYYY-MM-DD'),
-        incomeAmount: values.transactionType === 'income' ? values.amount : '0',
-        expenseAmount: values.transactionType === 'expense' ? values.amount : '0',
+        incomeAmount: values.transactionType === 'income' ? values.amount : null,
+        expenseAmount: values.transactionType === 'expense' ? values.amount : null,
       };
       let res;
       if (!rows.id) {

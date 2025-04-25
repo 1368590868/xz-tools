@@ -596,6 +596,94 @@ export class EnterTheDetailService {
       };
     }
   }
+
+  // 汇总查询
+  static async summary(params: PageParams): Promise<{
+    success: boolean;
+    data: any;
+  }> {
+    try {
+      const res = await request(`/api/enterTheDetails/monthlyReport`, {
+        method: 'GET',
+        params,
+      });
+      return {
+        success: res.code === 0,
+        data: res.data,
+      };
+    } catch (error) {
+      console.error('汇总查询出错:', error);
+      return {
+        success: false,
+        data: [],
+      };
+    }
+  }
+
+  // 收支看板数据
+  static async getBudgetData(params: { startDate: string; endDate: string }): Promise<{
+    success: boolean;
+    data: any;
+  }> {
+    try {
+      const res = await request(`/api/enterTheDetails/budget`, {
+        method: 'GET',
+        params,
+      });
+      return {
+        success: res.code === 0,
+        data: res.data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        data: [],
+      };
+    }
+  }
+
+  // 对手支出看板数据
+  static async getExpenditureData(params: { startDate: string; endDate: string }): Promise<{
+    success: boolean;
+    data: any;
+  }> {
+    try {
+      const res = await request(`/api/enterTheDetails/groupByOtherCorporation`, {
+        method: 'GET',
+        params,
+      });
+      return {
+        success: res.code === 0,
+        data: res.data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        data: [],
+      };
+    }
+  }
+  // 业务类型收支看板
+  static async getBusinessTypeData(params: { startDate: string; endDate: string }): Promise<{
+    success: boolean;
+    data: any;
+  }> {
+    try {
+      const res = await request(`/api/enterTheDetails/groupByBusinessType`, {
+        method: 'GET',
+        params,
+      });
+      return {
+        success: res.code === 0,
+        data: res.data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        data: [],
+      };
+    }
+  }
 }
 
 // 用户登录 修改密码
@@ -642,6 +730,53 @@ export class UserService {
       return {
         success: false,
         message: '修改失败',
+      };
+    }
+  }
+}
+
+export class TempEnterTheDetailsService {
+  // 导出
+  static async export(params: { refId: string }): Promise<{
+    success: boolean;
+    data: Blob;
+  }> {
+    try {
+      const res = await request(`/api/tempEnterTheDetails/export`, {
+        method: 'POST',
+        params,
+        responseType: 'blob',
+      });
+      return {
+        success: true,
+        data: res,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        data: new Blob(),
+      };
+    }
+  }
+
+  // 保存
+  static async save(params: { refId: string }): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    try {
+      const res = await request(`/api/tempEnterTheDetails/saveEnterTheDetails`, {
+        method: 'POST',
+        params,
+      });
+      return {
+        success: res.code === 0,
+        message: res.message || '保存成功',
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: '保存失败',
       };
     }
   }
