@@ -68,7 +68,6 @@ const KanbanPage: React.FC = () => {
   const [barData, setBarData] = useState<any>([]);
 
   const getBardData = async () => {
-    console.log('dateRange', dateRange);
     const startDate = dateRange[0] ? dayjs(dateRange[0]).format('YYYY-MM-DD') : '';
     const endDate = dateRange[1] ? dayjs(dateRange[1]).format('YYYY-MM-DD') : '';
     const params = {
@@ -122,6 +121,7 @@ const KanbanPage: React.FC = () => {
               <RangePicker
                 placeholder={['开始日期', '结束日期']}
                 value={dateRange}
+                allowClear={false}
                 onChange={(dates) => {
                   // @ts-ignore
                   setDateRange(dates);

@@ -29,7 +29,7 @@ const CounterPartyCard: React.FC<AccountCardProps> = ({ item }) => {
         series: [
           {
             type: 'pie',
-            radius: ['65%', '80%'],
+            radius: ['50%', '65%'],
             avoidLabelOverlap: false,
 
             center: ['50%', '50%'],

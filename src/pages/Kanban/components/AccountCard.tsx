@@ -29,7 +29,7 @@ const AccountCard: React.FC<AccountCardProps> = ({ item }) => {
         series: [
           {
             type: 'pie',
-            radius: ['65%', '80%'],
+            radius: ['50%', '65%'],
             avoidLabelOverlap: false,
 
             center: ['50%', '50%'],
@@ -53,8 +53,8 @@ const AccountCard: React.FC<AccountCardProps> = ({ item }) => {
             labelLine: {
               show: true,
 
-              length: 8, // ✅ 增加长度
-              length2: 8, // ✅ 增加第二段长度
+              length: 12, // ✅ 增加长度
+              length2: 12, // ✅ 增加第二段长度
               smooth: true,
             },
 
