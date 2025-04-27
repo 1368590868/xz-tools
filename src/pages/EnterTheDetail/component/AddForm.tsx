@@ -1,8 +1,12 @@
 import type { FormInstance } from 'antd';
 import { DatePicker, Form, Input, InputNumber, Radio, Select } from 'antd';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import React from 'react';
 import { EnterFormType, OptionsListType } from '../type';
 import './index.module.less';
+dayjs.extend(customParseFormat);
+const dateFormat = 'YYYY-MM-DD';
 
 interface AddFormProps {
   form: FormInstance<EnterFormType>;
@@ -22,7 +26,12 @@ const AddForm: React.FC<AddFormProps> = ({ form, optionsList }) => {
           },
         ]}
       >
-        <DatePicker placeholder="年 / 月 / 日" style={{ width: '100%' }} allowClear={false} />
+        <DatePicker
+          placeholder="年 / 月 / 日"
+          style={{ width: '100%' }}
+          allowClear={false}
+          maxDate={dayjs()}
+        />
       </Form.Item>
       <Form.Item
         label="公司名称"
