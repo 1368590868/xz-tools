@@ -25,7 +25,7 @@ export default [
   },
   {
     path: '/welcome',
-    name: '看板',
+    name: '台账看板',
     locale: false,
     icon: 'BarChartOutlined',
     component: './Kanban',

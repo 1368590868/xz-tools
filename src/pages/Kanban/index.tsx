@@ -2,6 +2,7 @@ import { EnterTheDetailService } from '@/services';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { Button, Card, Col, DatePicker, Empty, Row } from 'antd';
+import dayjs from 'dayjs';
 import { PieChart } from 'echarts/charts';
 import { LegendComponent, TitleComponent, TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
@@ -53,7 +54,10 @@ export interface OtherType {
 
 const KanbanPage: React.FC = () => {
   // 日期范围状态
-  const [dateRange, setDateRange] = useState<[any, any]>([null, null]);
+  const [dateRange, setDateRange] = useState<[any, any]>([
+    dayjs().startOf('year'),
+    dayjs(dayjs(), 'YYYY-MM-DD'),
+  ]);
 
   // 账户数据示例
   const [accountData, setAccountData] = useState<AccountData[]>([]);
@@ -65,6 +69,7 @@ const KanbanPage: React.FC = () => {
   const [barData, setBarData] = useState<any>([]);
 
   const getBardData = async () => {
+    console.log('dateRange', dateRange);
     const startDate = dateRange[0] ? moment(dateRange[0]).format('YYYY-MM-DD') : '';
     const endDate = dateRange[1] ? moment(dateRange[1]).format('YYYY-MM-DD') : '';
     const params = {
@@ -90,10 +95,10 @@ const KanbanPage: React.FC = () => {
     getBardData();
   };
   const onRest = async () => {
-    setDateRange([null, null]);
+    setDateRange([dayjs().startOf('year'), dayjs(dayjs(), 'YYYY-MM-DD')]);
 
-    const startDate = '';
-    const endDate = '';
+    const startDate = dayjs().startOf('year').format('YYYY-MM-DD');
+    const endDate = dayjs().format('YYYY-MM-DD');
     const params = {
       startDate,
       endDate,
@@ -118,7 +123,9 @@ const KanbanPage: React.FC = () => {
               <RangePicker
                 placeholder={['开始日期', '结束日期']}
                 value={dateRange}
-                onChange={(dates) => setDateRange(dates)}
+                onChange={(dates) => {
+                  setDateRange(dates);
+                }}
               />
             </Col>
             <Col>
@@ -140,8 +147,8 @@ const KanbanPage: React.FC = () => {
             <div className="carousel-slide">
               <div style={{ display: 'flex', gap: 30, overflowX: 'scroll' }}>
                 {accountData && accountData.length > 0 ? (
-                  accountData.map((item) => (
-                    <div key={item.id}>
+                  accountData.map((item, idx) => (
+                    <div key={idx}>
                       <AccountCard item={item} />
                     </div>
                   ))
