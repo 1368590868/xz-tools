@@ -2,7 +2,7 @@ import { EnterTheDetailService } from '@/services';
 import { ActionType } from '@ant-design/pro-components';
 import { Form, message, Modal, Segmented } from 'antd';
 import { SegmentedValue } from 'antd/es/segmented';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import React, { useImperativeHandle, useRef, useState } from 'react';
 import { EnterFormType, MultipleRef, OptionsListType, SegmentedType } from '../type';
 import AddForm from './AddForm';
@@ -27,7 +27,7 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
   const [visible, setVisible] = useState(false);
   const [rows, setRows] = useState<EnterFormType>({
     id: '',
-    tradeDate: moment(),
+    tradeDate: dayjs(),
     transactionType: 'income',
     amount: '',
     remark: '',
@@ -48,7 +48,7 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
     setVisible(true);
     form.setFieldsValue({
       ...record,
-      tradeDate: moment(record.tradeDate),
+      tradeDate: dayjs(record.tradeDate),
       amount: record.incomeAmount || record.expenseAmount,
     });
     // 如果有id，则根据金额判断是收入还是支出
@@ -82,7 +82,7 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
       const values = await form.validateFields();
       const data = {
         ...values,
-        tradeDate: moment(values.tradeDate).format('YYYY-MM-DD'),
+        tradeDate: dayjs(values.tradeDate).format('YYYY-MM-DD'),
         incomeAmount: values.transactionType === 'income' ? values.amount : null,
         expenseAmount: values.transactionType === 'expense' ? values.amount : null,
       };

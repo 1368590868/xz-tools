@@ -3,7 +3,7 @@ import { BankType } from '@/pages/Dict/Bank/type';
 import { BankService, CompanyService, EnterTheDetailService } from '@/services';
 import { Button, Col, DatePicker, Form, Row, Select, Table } from 'antd';
 import { ColumnType } from 'antd/es/table';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { CompanyType } from './type';
 
@@ -97,56 +97,49 @@ const YearCount: React.FC = () => {
       },
     },
   ];
-
-  const params = {
-    pageSize: 99999,
-    current: 1,
-  };
-  const getOptionPromise = [
-    CompanyService.getCompanyList<CompanyType>(params),
-    BankService.getBankList<BankType>(params),
-  ];
   const getOptions = async () => {
-    const res = await Promise.all(getOptionPromise);
+    // 🔥 注意这里，把 promise 放进函数内部，每次调用 getOptions 时才生成
+    const params = {
+      pageSize: 99999,
+      current: 1,
+    };
+
+    const [companyRes, bankRes] = await Promise.all([
+      CompanyService.getCompanyList<CompanyType>(params),
+      BankService.getBankList<BankType>(params),
+    ]);
 
     setCompanyList(
-      res[0]?.data?.map((x) => ({
+      companyRes?.data?.map((x) => ({
         label: x.name,
         value: x.id,
         ...x,
-      })),
+      })) || [],
     );
 
     setBankList(
-      res[1]?.data?.map((x) => ({
+      bankRes?.data?.map((x) => ({
         label: x.name,
         value: x.id,
         ...x,
-      })),
+      })) || [],
     );
 
-    // 设置默认值
     form.setFieldsValue({
-      tradeDateYear: moment().format('YYYY'),
-      corporationId: res[0]?.data[0]?.id,
-      bankId: res[1]?.data[0]?.id,
+      tradeDateYear: dayjs().format('YYYY'),
+      corporationId: companyRes?.data?.[0]?.id,
+      bankId: bankRes?.data?.[0]?.id,
     });
-
-    return Promise.resolve();
   };
 
-  // 获取表格数据
   const getTableData = async () => {
-    console.log(form.getFieldsValue());
-    const data = await form.validateFields();
-    console.log(data, 'data');
+    const values = await form.validateFields();
     const res = await EnterTheDetailService.summary({
-      ...data,
-      tradeDateYear: moment(data.tradeDateYear).format('YYYY'),
+      ...values,
+      tradeDateYear: dayjs(values.tradeDateYear).format('YYYY'),
     });
-    setDatasource(res.data);
+    setDatasource(res.data || []);
   };
-
   useEffect(() => {
     getOptions().then(() => getTableData());
   }, []);
@@ -162,7 +155,7 @@ const YearCount: React.FC = () => {
               name="tradeDateYear"
               getValueProps={(value) => {
                 return {
-                  value: value ? moment(value, 'YYYY') : undefined,
+                  value: value ? dayjs(value, 'YYYY') : undefined,
                 };
               }}
             >

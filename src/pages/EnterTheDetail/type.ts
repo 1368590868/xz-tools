@@ -1,4 +1,4 @@
-import { Moment } from 'moment';
+import { Dayjs } from 'dayjs';
 import { BankType } from '../Dict/Bank/type';
 import { BusinessType } from '../Dict/BusinessType/type';
 import { CompanyType } from '../Dict/Company/type';
@@ -15,7 +15,7 @@ export type TransactionType = 'income' | 'expense';
 
 export interface EnterFormType {
   id: string | null;
-  tradeDate?: string | Moment;
+  tradeDate?: string | Dayjs;
   bankId?: string;
   corporationId?: string;
   businessTypeId?: string;

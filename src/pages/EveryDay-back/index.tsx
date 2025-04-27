@@ -3,7 +3,7 @@ import { downloadBlobFile } from '@/utils/download';
 import { PageContainer } from '@ant-design/pro-components';
 import type { CalendarProps } from 'antd';
 import { Button, Calendar } from 'antd';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import React from 'react';
 import customLocale from './local';
 
@@ -14,7 +14,7 @@ const getMonthData = (value: any) => {
 };
 
 const EveryDay: React.FC = () => {
-  const today = moment();
+  const today = dayjs();
 
   const handleDownload = async (date: any) => {
     const formatted = date.format('YYYY-MM-DD');

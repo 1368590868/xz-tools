@@ -8,7 +8,6 @@ import { LegendComponent, TitleComponent, TooltipComponent } from 'echarts/compo
 import * as echarts from 'echarts/core';
 import { LabelLayout, UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import AccountCard from './components/AccountCard';
 import BarCount from './components/BarCount';
@@ -70,8 +69,8 @@ const KanbanPage: React.FC = () => {
 
   const getBardData = async () => {
     console.log('dateRange', dateRange);
-    const startDate = dateRange[0] ? moment(dateRange[0]).format('YYYY-MM-DD') : '';
-    const endDate = dateRange[1] ? moment(dateRange[1]).format('YYYY-MM-DD') : '';
+    const startDate = dateRange[0] ? dayjs(dateRange[0]).format('YYYY-MM-DD') : '';
+    const endDate = dateRange[1] ? dayjs(dateRange[1]).format('YYYY-MM-DD') : '';
     const params = {
       startDate,
       endDate,

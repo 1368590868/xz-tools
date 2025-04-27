@@ -11,7 +11,7 @@ import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns, ProFormInstance } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { Button, DatePicker, message, Popconfirm, Select } from 'antd';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import React, { useEffect, useRef } from 'react';
 import { BankType } from '../Dict/Bank/type';
 import { BusinessType } from '../Dict/BusinessType/type';
@@ -112,9 +112,9 @@ const EnterTheDetail: React.FC = () => {
         // @ts-ignore
         return <DatePicker.YearPicker allowClear={false} format="YYYY" />;
       },
-      initialValue: moment(),
+      initialValue: dayjs(),
       search: {
-        transform: (value: any) => moment(value).format('YYYY'),
+        transform: (value: any) => dayjs(value).format('YYYY'),
       },
     },
     {
@@ -374,7 +374,7 @@ const EnterTheDetail: React.FC = () => {
     const formValues = formRef.current?.getFieldsValue();
     const res = await EnterTheDetailService.export({
       ...formValues,
-      tradeDateYear: moment(formValues?.tradeDateYear).format('YYYY'),
+      tradeDateYear: dayjs(formValues?.tradeDateYear).format('YYYY'),
     });
     if (res.success) {
       // 文件流下载

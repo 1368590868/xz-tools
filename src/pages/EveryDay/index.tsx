@@ -4,7 +4,7 @@ import { downloadBlobFile } from '@/utils/download';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { Button, DatePicker } from 'antd';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { useRef } from 'react';
 import EditModal, { EditModalRef } from './component/EditModal';
 import { CompanyType } from './type';
@@ -21,16 +21,16 @@ const Company: React.FC = () => {
         return <DatePicker.YearPicker format="YYYY" allowClear={false} />;
       },
       hideInTable: true,
-      initialValue: moment(),
+      initialValue: dayjs(),
       search: {
-        transform: (value: any) => moment(value).format('YYYY'),
+        transform: (value: any) => dayjs(value).format('YYYY'),
       },
     },
     {
       title: '月',
       dataIndex: 'tradeDateMonth',
       valueType: 'select',
-      initialValue: moment().format('M'),
+      initialValue: dayjs().format('M'),
       fieldProps: {
         options: [
           { label: '1月', value: '1' },
@@ -75,7 +75,7 @@ const Company: React.FC = () => {
       ellipsis: true,
       hideInSearch: true,
       render: (_, record) => {
-        return moment(record.date).format('MM月DD日');
+        return dayjs(record.date).format('MM月DD日');
       },
     },
     {
@@ -85,7 +85,7 @@ const Company: React.FC = () => {
       ellipsis: true,
       hideInSearch: true,
       render: (_, record) => {
-        return moment(record.date).format('YYYY年交易台账--MM月DD日');
+        return dayjs(record.date).format('YYYY年交易台账--MM月DD日');
       },
     },
     {
@@ -99,7 +99,7 @@ const Company: React.FC = () => {
           type="link"
           key="edit"
           onClick={async () => {
-            const date = moment(record.date);
+            const date = dayjs(record.date);
             const formatted = date.format('YYYY-MM-DD');
             const res = await EnterTheDetailService.export({
               startDate: date.format('YYYY-01-01'),
