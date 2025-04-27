@@ -20,6 +20,7 @@ export interface EditModalRef {
 
 const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
   const { actionRef } = props;
+  const [loading, setLoading] = useState(false);
   const multipleRef = useRef<MultipleRef>(null);
   const [form] = Form.useForm<EnterFormType>();
   const [segmentedType, setSegmentedType] = useState<SegmentedType | SegmentedValue>('single');
@@ -70,7 +71,9 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
   const doUpdate = async () => {
     try {
       if (segmentedType === 'multiple') {
+        setLoading(true);
         await multipleRef.current?.onOk().then(() => {
+          setLoading(false);
           setVisible(false);
           actionRef.current?.reload(true);
         });
@@ -105,6 +108,7 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
       title={title}
       open={visible}
       onOk={doUpdate}
+      confirmLoading={loading}
       onCancel={() => setVisible(false)}
       width={800}
     >

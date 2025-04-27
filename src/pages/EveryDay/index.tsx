@@ -102,7 +102,8 @@ const Company: React.FC = () => {
             const date = moment(record.date);
             const formatted = date.format('YYYY-MM-DD');
             const res = await EnterTheDetailService.export({
-              tradeDate: formatted,
+              startDate: date.format('YYYY-01-01'),
+              endDate: formatted,
             });
             downloadBlobFile(res.data, `${date.format('YYYY年交易台账-MM月DD日')}.xlsx`);
           }}

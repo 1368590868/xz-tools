@@ -355,7 +355,7 @@ const EnterTheDetail: React.FC = () => {
         </Button>,
         <Popconfirm
           key={'delete'}
-          title="确定删除当前公司名称吗？"
+          title="确定删除当前交易明细吗？"
           description=""
           onConfirm={() => onDelete(record.id || '')}
           onCancel={() => {}}
@@ -392,6 +392,7 @@ const EnterTheDetail: React.FC = () => {
         scroll={{ x: 1300 }}
         search={{
           labelWidth: 100,
+          defaultCollapsed: false,
         }}
         pagination={{
           defaultPageSize: 10,
