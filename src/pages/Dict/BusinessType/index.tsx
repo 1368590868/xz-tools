@@ -3,7 +3,7 @@ import { BusinessService } from '@/services';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { Button, message, Popconfirm } from 'antd';
+import { Button, message } from 'antd';
 import { useRef } from 'react';
 import EditModal, { EditModalRef } from './component/EditModal';
 import { BusinessType } from './type';
@@ -54,7 +54,7 @@ const Business: React.FC = () => {
       hideInSearch: true,
     },
     {
-      width: 150,
+      width: 80,
       align: 'center',
       title: '操作',
       dataIndex: 'option',
@@ -69,19 +69,19 @@ const Business: React.FC = () => {
         >
           修改
         </Button>,
-        <Popconfirm
-          key={'delete'}
-          title="确定删除当前业务类型吗？"
-          description=""
-          onConfirm={() => onDelete(record.id || '')}
-          onCancel={() => {}}
-          okText="确定"
-          cancelText="取消"
-        >
-          <Button type="link" key="delete" danger>
-            删除
-          </Button>
-        </Popconfirm>,
+        // <Popconfirm
+        //   key={'delete'}
+        //   title="确定删除当前业务类型吗？"
+        //   description=""
+        //   onConfirm={() => onDelete(record.id || '')}
+        //   onCancel={() => {}}
+        //   okText="确定"
+        //   cancelText="取消"
+        // >
+        //   <Button type="link" key="delete" danger>
+        //     删除
+        //   </Button>
+        // </Popconfirm>,
       ],
     },
   ];
