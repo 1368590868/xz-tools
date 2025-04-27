@@ -46,15 +46,14 @@ const EnterTheDetail: React.FC = () => {
     pageSize: 99999,
     current: 1,
   };
-  const getOptionPromise = [
-    CompanyService.getCompanyList<CompanyType>(params),
-    OtherCompanyService.getCompanyList<OtherCompanyType>(params),
-    BankService.getBankList<BankType>(params),
-    BusinessService.getBusinessList<BusinessType>(params),
-  ];
 
   const getOptions = async () => {
-    const res = await Promise.all(getOptionPromise);
+    const res = await Promise.all([
+      CompanyService.getCompanyList<CompanyType>(params),
+      OtherCompanyService.getCompanyList<OtherCompanyType>(params),
+      // BankService.getBankList<BankType>(params),
+      BusinessService.getBusinessList<BusinessType>(params),
+    ]);
 
     setCompanyList(
       res[0]?.data?.map((x) => ({
@@ -70,15 +69,15 @@ const EnterTheDetail: React.FC = () => {
         ...x,
       })),
     );
-    setBankList(
-      res[2]?.data?.map((x) => ({
-        label: x.name,
-        value: x.id,
-        ...x,
-      })),
-    );
+    // setBankList(
+    //   res[2]?.data?.map((x) => ({
+    //     label: x.name,
+    //     value: x.id,
+    //     ...x,
+    //   })),
+    // );
     setBusinessList(
-      res[3]?.data?.map((x) => ({
+      res[2]?.data?.map((x) => ({
         label: x.name,
         value: x.id,
         ...x,
@@ -101,6 +100,28 @@ const EnterTheDetail: React.FC = () => {
       formRef.current?.setFieldValue('tradeDateYear', new Date().getFullYear());
     }
   }, []);
+
+  // Bank Service
+  const fetchBankListByCorporation = async (corporationId?: string) => {
+    if (!corporationId) {
+      setBankList([]);
+      return;
+    }
+    const res = await BankService.getBankList<BankType>({
+      corporationId,
+      pageSize: 99999,
+      current: 1,
+    });
+    if (res.success) {
+      setBankList(
+        res.data?.map((x) => ({
+          label: x.name,
+          value: x.id,
+          ...x,
+        })) || [],
+      );
+    }
+  };
 
   const searchColumns: ProColumns<EnterFormType>[] = [
     {
@@ -181,10 +202,7 @@ const EnterTheDetail: React.FC = () => {
             showSearch
             optionFilterProp="label"
             placeholder="请选择"
-            options={bankList.map((item) => ({
-              label: item.name,
-              value: item.id,
-            }))}
+            options={bankList}
           />
         );
       },
@@ -394,6 +412,15 @@ const EnterTheDetail: React.FC = () => {
       <ProTable<EnterFormType, API.PageParams>
         actionRef={actionRef}
         formRef={formRef}
+        form={{
+          onValuesChange: (changedValues) => {
+            if (changedValues.corporationId) {
+              fetchBankListByCorporation(changedValues.corporationId);
+              // 还可以清空银行选择，防止脏数据
+              formRef.current?.setFieldValue('bankId', undefined);
+            }
+          },
+        }}
         rowKey="id"
         scroll={{ x: 1300 }}
         search={{

@@ -4,7 +4,7 @@ import type { FormInstance } from 'antd';
 import { DatePicker, Form, Input, InputNumber, Radio, Select } from 'antd';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { EnterFormType, OptionsListType } from '../type';
 import './index.module.less';
 dayjs.extend(customParseFormat);
@@ -42,6 +42,14 @@ const AddForm: React.FC<AddFormProps> = ({ form, optionsList }) => {
       });
     }
   };
+
+  // 🆕 补充这段，一进来就请求银行列表！
+  useEffect(() => {
+    const corporationId = form.getFieldValue('corporationId');
+    if (corporationId) {
+      getBankList(corporationId);
+    }
+  }, [form]);
 
   return (
     <Form form={form} labelCol={{ span: 4 }} onValuesChange={onFormValuesChange}>

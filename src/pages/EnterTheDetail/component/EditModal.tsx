@@ -54,7 +54,6 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
     // 如果有id，则根据金额判断是收入还是支出
     if (!!record.id) {
       const incomeAmount = record.incomeAmount;
-      console.log(incomeAmount);
 
       form.setFieldValue('transactionType', incomeAmount ? 'income' : 'expense');
     }
@@ -72,11 +71,15 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
     try {
       if (segmentedType === 'multiple') {
         setLoading(true);
-        await multipleRef.current?.onOk().then(() => {
-          setLoading(false);
-          setVisible(false);
-          actionRef.current?.reload(true);
-        });
+        await multipleRef.current
+          ?.onOk()
+          .then(() => {
+            setVisible(false);
+            actionRef.current?.reload(true);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
         return;
       }
       const values = await form.validateFields();
@@ -104,33 +107,37 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
   };
 
   return (
-    <Modal
-      title={title}
-      open={visible}
-      onOk={doUpdate}
-      confirmLoading={loading}
-      onCancel={() => setVisible(false)}
-      width={800}
-    >
-      {!rows.id && (
-        <Segmented
-          value={segmentedType}
-          onChange={onTabChange}
-          style={{ marginBottom: 16 }}
-          options={[
-            { label: '单条新增', value: 'single' },
-            { label: '批量导入', value: 'multiple' },
-          ]}
-        />
-      )}
+    <>
+      {visible && (
+        <Modal
+          title={title}
+          open={visible}
+          onOk={doUpdate}
+          confirmLoading={loading}
+          onCancel={() => setVisible(false)}
+          width={800}
+        >
+          {!rows.id && (
+            <Segmented
+              value={segmentedType}
+              onChange={onTabChange}
+              style={{ marginBottom: 16 }}
+              options={[
+                { label: '单条新增', value: 'single' },
+                { label: '批量导入', value: 'multiple' },
+              ]}
+            />
+          )}
 
-      {segmentedType === 'single' ? (
-        <AddForm form={form} optionsList={props.optionsList} />
-      ) : (
-        // @ts-ignore
-        <MultipleForm ref={multipleRef} />
+          {segmentedType === 'single' ? (
+            <AddForm form={form} optionsList={props.optionsList} />
+          ) : (
+            // @ts-ignore
+            <MultipleForm ref={multipleRef} />
+          )}
+        </Modal>
       )}
-    </Modal>
+    </>
   );
 });
 

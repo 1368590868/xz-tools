@@ -97,39 +97,64 @@ const YearCount: React.FC = () => {
       },
     },
   ];
+
+  const getBankListAndSetFirstBank = async (corporationId: string) => {
+    if (!corporationId) {
+      setBankList([]);
+      form.setFieldsValue({ bankId: undefined });
+      return;
+    }
+    const res = await BankService.getBankList<BankType>({
+      corporationId,
+      pageSize: 99999,
+      current: 1,
+    });
+    if (res.success) {
+      const list =
+        res.data?.map((x) => ({
+          label: x.name,
+          value: x.id,
+          ...x,
+        })) || [];
+      setBankList(list);
+      // ⚡默认选中第一个银行
+      if (list.length > 0) {
+        form.setFieldsValue({ bankId: list[0].value });
+      }
+      return Promise.resolve();
+    } else {
+      return Promise.reject();
+    }
+  };
+
   const getOptions = async () => {
-    // 🔥 注意这里，把 promise 放进函数内部，每次调用 getOptions 时才生成
     const params = {
       pageSize: 99999,
       current: 1,
     };
 
-    const [companyRes, bankRes] = await Promise.all([
-      CompanyService.getCompanyList<CompanyType>(params),
-      BankService.getBankList<BankType>(params),
-    ]);
+    const companyRes = await CompanyService.getCompanyList<CompanyType>(params);
 
-    setCompanyList(
-      companyRes?.data?.map((x) => ({
-        label: x.name,
-        value: x.id,
-        ...x,
-      })) || [],
-    );
+    const companyData = companyRes?.data || [];
 
-    setBankList(
-      bankRes?.data?.map((x) => ({
-        label: x.name,
-        value: x.id,
-        ...x,
-      })) || [],
-    );
+    const companies = companyData.map((x) => ({
+      label: x.name,
+      value: x.id,
+      ...x,
+    }));
 
-    form.setFieldsValue({
-      tradeDateYear: dayjs().format('YYYY'),
-      corporationId: companyRes?.data?.[0]?.id,
-      bankId: bankRes?.data?.[0]?.id,
-    });
+    setCompanyList(companies);
+
+    if (companies.length > 0) {
+      const firstCompanyId = companies[0].value || '';
+      // ⚡默认选第一个公司
+      form.setFieldsValue({
+        tradeDateYear: dayjs().format('YYYY'),
+        corporationId: firstCompanyId,
+      });
+      // 拿银行列表 + 默认选第一个银行
+      await getBankListAndSetFirstBank(firstCompanyId);
+    }
   };
 
   const getTableData = async () => {
@@ -140,6 +165,14 @@ const YearCount: React.FC = () => {
     });
     setDatasource(res.data || []);
   };
+
+  const onFormValuesChange = async (changedValues: { corporationId?: string }) => {
+    if (changedValues.corporationId) {
+      await getBankListAndSetFirstBank(changedValues.corporationId);
+      // 🆕 银行选完了之后，自动查一次
+      // await getTableData();
+    }
+  };
   useEffect(() => {
     getOptions().then(() => getTableData());
   }, []);
@@ -147,7 +180,7 @@ const YearCount: React.FC = () => {
   return (
     <>
       {/* search form */}
-      <Form form={form} onFinish={getTableData}>
+      <Form form={form} onFinish={getTableData} onValuesChange={onFormValuesChange}>
         <Row gutter={[20, 20]}>
           <Col>
             <Form.Item
@@ -183,10 +216,7 @@ const YearCount: React.FC = () => {
                 showSearch
                 optionFilterProp="label"
                 placeholder="请选择"
-                options={bankList.map((item) => ({
-                  label: item.name,
-                  value: item.id,
-                }))}
+                options={bankList}
               />
             </Form.Item>
           </Col>

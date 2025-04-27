@@ -19,21 +19,25 @@ const MultipleForm: React.FC = React.forwardRef<MultipleRef>((props, ref) => {
   }>({});
 
   const onOk = async () => {
-    if (result.fail === 0) {
-      setLoading(true);
-      const res = await TempEnterTheDetailsService.save({ refId }).finally(() => {
-        setLoading(false);
-      });
-      if (res.success) {
-        message.success('批量上传成功');
-      }
-      return Promise.resolve();
-    } else {
-      if (fileList.length === 0) {
-        message.warning('请上传文件');
+    try {
+      if (result.fail === 0) {
+        setLoading(true);
+        const res = await TempEnterTheDetailsService.save({ refId }).finally(() => {
+          setLoading(false);
+        });
+        if (res.success) {
+          message.success('批量上传成功');
+        }
+        return Promise.resolve();
+      } else {
+        if (fileList.length === 0) {
+          message.warning('请上传文件');
+        } else {
+          message.warning('请下载失败详情表调整后重新上传');
+        }
         return Promise.reject();
       }
-      message.warning('请下载失败详情表调整后重新上传');
+    } catch (error) {
       return Promise.reject();
     }
   };
@@ -53,8 +57,6 @@ const MultipleForm: React.FC = React.forwardRef<MultipleRef>((props, ref) => {
     }).finally(() => {
       setLoading(false);
     });
-
-    console.log(res, 'res2222');
 
     setResult((prev) => {
       return {
