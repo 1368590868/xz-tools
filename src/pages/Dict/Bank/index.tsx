@@ -1,10 +1,10 @@
 /* eslint-disable no-undef */
-import { BankService } from '@/services';
+import { BankService, CompanyService } from '@/services';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { Button, message } from 'antd';
-import { useRef } from 'react';
+import { Button, Select } from 'antd';
+import { useEffect, useRef, useState } from 'react';
 import EditModal, { EditModalRef } from './component/EditModal';
 import { BankType } from './type';
 
@@ -13,17 +13,28 @@ const Bank: React.FC = () => {
 
   const modalRef = useRef<EditModalRef | null>(null);
 
-  const onDelete = async (id: string) => {
-    try {
-      const res = await BankService.deleteCompany(id);
-      if (res.success) {
-        message.success('删除成功');
-        actionRef.current?.reload();
-      }
-    } catch (error) {
-      console.log(error);
+  // const onDelete = async (id: string) => {
+  //   try {
+  //     const res = await BankService.deleteCompany(id);
+  //     if (res.success) {
+  //       message.success('删除成功');
+  //       actionRef.current?.reload();
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  const [compnayList, setCompnayList] = useState<BankType[]>([]);
+  const getCompanyList = async () => {
+    const res = await CompanyService.getCompanyList<BankType>({ pageSize: 99999, current: 1 });
+    if (res.success) {
+      setCompnayList(res.data);
     }
   };
+  useEffect(() => {
+    getCompanyList();
+  }, []);
 
   const columns: ProColumns<BankType>[] = [
     {
@@ -39,6 +50,34 @@ const Bank: React.FC = () => {
         // 计算序号：(当前页码 - 1) * 每页条数 + 当前行索引 + 1
         return (current - 1) * pageSize + index + 1;
       },
+    },
+    {
+      title: '公司名称',
+      align: 'center',
+      dataIndex: 'corporationId',
+      ellipsis: true,
+      hideInSearch: false,
+      hideInTable: true,
+      renderFormItem: () => {
+        return (
+          <Select
+            placeholder="请选择公司名称"
+            showSearch
+            optionFilterProp="label"
+            options={compnayList.map((x) => ({
+              label: x.name,
+              value: x.id,
+            }))}
+          />
+        );
+      },
+    },
+    {
+      title: '公司名称',
+      align: 'center',
+      dataIndex: 'corporationName',
+      ellipsis: true,
+      hideInSearch: true,
     },
     {
       title: '银行名称',
@@ -137,6 +176,7 @@ const Bank: React.FC = () => {
                 remark: '',
                 id: null,
                 cardNumber: undefined,
+                corporationId: undefined,
               });
             }}
           >
@@ -149,7 +189,7 @@ const Bank: React.FC = () => {
         bordered
       />
 
-      <EditModal ref={modalRef} actionRef={actionRef}></EditModal>
+      <EditModal ref={modalRef} actionRef={actionRef} compnayList={compnayList}></EditModal>
     </PageContainer>
   );
 };

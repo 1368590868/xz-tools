@@ -1,8 +1,7 @@
-import { BankService, OtherCompanyService } from '@/services';
+import { OtherCompanyService } from '@/services';
 import { ActionType } from '@ant-design/pro-components';
-import { Form, Input, message, Modal, Select } from 'antd';
-import React, { useEffect, useImperativeHandle, useState } from 'react';
-import { BankType } from '../../Bank/type';
+import { Form, Input, message, Modal } from 'antd';
+import React, { useImperativeHandle, useState } from 'react';
 import { OtherCompanyType } from '../type';
 
 interface Props {
@@ -46,23 +45,25 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
         message.success('修改成功');
         setVisible(false);
         actionRef.current?.reload(true);
+      } else {
+        message.error(res.message);
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const [bankList, setBankList] = useState<BankType[]>([]);
-  const getBankList = async () => {
-    const res = await BankService.getBankList<BankType>({ pageSize: 99999, current: 1 });
-    console.log(res);
-    if (res.success) {
-      setBankList(res.data);
-    }
-  };
-  useEffect(() => {
-    getBankList();
-  }, []);
+  // const [bankList, setBankList] = useState<BankType[]>([]);
+  // const getBankList = async () => {
+  //   const res = await BankService.getBankList<BankType>({ pageSize: 99999, current: 1 });
+  //   console.log(res);
+  //   if (res.success) {
+  //     setBankList(res.data);
+  //   }
+  // };
+  // useEffect(() => {
+  //   getBankList();
+  // }, []);
 
   return (
     <Modal title={title} open={visible} onOk={doUpdate} onCancel={() => setVisible(false)}>
@@ -79,14 +80,14 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
         >
           <Input placeholder="请填写对手方名称" />
         </Form.Item>
-        <Form.Item label="银行" name="bankId">
+        {/* <Form.Item label="银行" name="bankId">
           <Select
             placeholder="请选择银行"
             options={bankList.map((x) => ({ label: x.name, value: x.id }))}
             showSearch
             optionFilterProp="label"
           />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item label="备注" name="remark">
           <Input.TextArea placeholder="请填写备注" />
         </Form.Item>

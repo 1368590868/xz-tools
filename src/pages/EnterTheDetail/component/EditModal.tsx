@@ -127,6 +127,7 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
       {segmentedType === 'single' ? (
         <AddForm form={form} optionsList={props.optionsList} />
       ) : (
+        // @ts-ignore
         <MultipleForm ref={multipleRef} />
       )}
     </Modal>

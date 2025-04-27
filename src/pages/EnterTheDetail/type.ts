@@ -20,10 +20,10 @@ export interface EnterFormType {
   corporationId?: string;
   businessTypeId?: string;
   otherCorporationId?: string;
-  incomeAmount?: string | null;
-  expenseAmount?: string | null;
+  incomeAmount?: string | null | number;
+  expenseAmount?: string | null | number;
   transactionType?: TransactionType;
-  amount?: string | null;
+  amount?: string | null | number;
   remark?: string;
 }
 

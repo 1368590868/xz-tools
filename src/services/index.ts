@@ -597,6 +597,30 @@ export class EnterTheDetailService {
     }
   }
 
+  // 交易明细导出
+  static async exportDetails(params: PageParams): Promise<{
+    success: boolean;
+    data: Blob;
+  }> {
+    try {
+      const res = await request(`/api/enterTheDetails/transactionDetailsExport`, {
+        method: 'GET',
+        params,
+        responseType: 'blob',
+      });
+      return {
+        success: true,
+        data: res,
+      };
+    } catch (error) {
+      console.error('导出出错:', error);
+      return {
+        success: false,
+        data: new Blob(),
+      };
+    }
+  }
+
   // 汇总查询
   static async summary(params: PageParams): Promise<{
     success: boolean;

@@ -123,6 +123,7 @@ const KanbanPage: React.FC = () => {
                 placeholder={['开始日期', '结束日期']}
                 value={dateRange}
                 onChange={(dates) => {
+                  // @ts-ignore
                   setDateRange(dates);
                 }}
               />

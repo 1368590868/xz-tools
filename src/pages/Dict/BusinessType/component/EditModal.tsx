@@ -45,6 +45,8 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
         message.success('修改成功');
         setVisible(false);
         actionRef.current?.reload(true);
+      } else {
+        message.error(res.message);
       }
     } catch (error) {
       console.log(error);

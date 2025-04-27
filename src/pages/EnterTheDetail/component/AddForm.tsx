@@ -1,3 +1,5 @@
+import { BankType } from '@/pages/Dict/Bank/type';
+import { BankService } from '@/services';
 import type { FormInstance } from 'antd';
 import { DatePicker, Form, Input, InputNumber, Radio, Select } from 'antd';
 import dayjs from 'dayjs';
@@ -6,7 +8,6 @@ import React from 'react';
 import { EnterFormType, OptionsListType } from '../type';
 import './index.module.less';
 dayjs.extend(customParseFormat);
-const dateFormat = 'YYYY-MM-DD';
 
 interface AddFormProps {
   form: FormInstance<EnterFormType>;
@@ -14,8 +15,36 @@ interface AddFormProps {
 }
 
 const AddForm: React.FC<AddFormProps> = ({ form, optionsList }) => {
+  const [bankList, setBankList] = React.useState<BankType[]>([]);
+
+  const getBankList = async (corporationId: string) => {
+    const res = await BankService.getBankList<BankType>({
+      corporationId,
+      pageSize: 99999,
+      current: 1,
+    });
+    if (res.success) {
+      setBankList(
+        res.data.map((x) => ({
+          label: x.name,
+          value: x.id,
+          ...x,
+        })),
+      );
+    }
+  };
+
+  const onFormValuesChange = (changedValues: { corporationId: string }) => {
+    if (changedValues.corporationId) {
+      getBankList(changedValues.corporationId);
+      form.setFieldsValue({
+        bankId: undefined,
+      });
+    }
+  };
+
   return (
-    <Form form={form} labelCol={{ span: 4 }}>
+    <Form form={form} labelCol={{ span: 4 }} onValuesChange={onFormValuesChange}>
       <Form.Item
         label="交易日期"
         name="tradeDate"
@@ -77,12 +106,7 @@ const AddForm: React.FC<AddFormProps> = ({ form, optionsList }) => {
           },
         ]}
       >
-        <Select
-          showSearch
-          optionFilterProp="label"
-          placeholder="请选择"
-          options={optionsList.bankList}
-        />
+        <Select showSearch optionFilterProp="label" placeholder="请选择" options={bankList} />
       </Form.Item>
       <Form.Item
         label="业务类型"

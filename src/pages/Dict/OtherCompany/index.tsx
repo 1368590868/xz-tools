@@ -3,7 +3,7 @@ import { OtherCompanyService } from '@/services';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { Button, message } from 'antd';
+import { Button } from 'antd';
 import { useRef } from 'react';
 import EditModal, { EditModalRef } from './component/EditModal';
 import { OtherCompanyType } from './type';
@@ -11,17 +11,17 @@ const OtherCompany: React.FC = () => {
   const actionRef = useRef<ActionType>();
   const modalRef = useRef<EditModalRef | null>(null);
 
-  const onDelete = async (id: string) => {
-    try {
-      const res = await OtherCompanyService.deleteCompany(id);
-      if (res.success) {
-        message.success('删除成功');
-        actionRef.current?.reload();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const onDelete = async (id: string) => {
+  //   try {
+  //     const res = await OtherCompanyService.deleteCompany(id);
+  //     if (res.success) {
+  //       message.success('删除成功');
+  //       actionRef.current?.reload();
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const columns: ProColumns<OtherCompanyType>[] = [
     {
@@ -45,21 +45,21 @@ const OtherCompany: React.FC = () => {
       ellipsis: true,
       hideInSearch: false,
     },
-    {
-      title: '银行名称',
-      align: 'center',
-      dataIndex: 'bankName',
-      ellipsis: true,
-      hideInSearch: false,
-    },
-    {
-      title: '银行卡号',
-      align: 'center',
-      dataIndex: 'cardNumber',
-      ellipsis: true,
-      hideInSearch: false,
-      copyable: true,
-    },
+    // {
+    //   title: '银行名称',
+    //   align: 'center',
+    //   dataIndex: 'bankName',
+    //   ellipsis: true,
+    //   hideInSearch: false,
+    // },
+    // {
+    //   title: '银行卡号',
+    //   align: 'center',
+    //   dataIndex: 'cardNumber',
+    //   ellipsis: true,
+    //   hideInSearch: false,
+    //   copyable: true,
+    // },
     {
       title: '备注',
       align: 'center',

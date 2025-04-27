@@ -326,6 +326,9 @@ const EnterTheDetail: React.FC = () => {
       hideInSearch: true,
       width: 180,
       valueType: 'money',
+      render: (value, record) => {
+        return record.incomeAmount === 0 ? '' : value;
+      },
     },
     {
       title: '支出金额/元',
@@ -335,6 +338,9 @@ const EnterTheDetail: React.FC = () => {
       hideInSearch: true,
       width: 180,
       valueType: 'money',
+      render: (value, record) => {
+        return record.expenseAmount === 0 ? '' : value;
+      },
     },
     {
       width: 150,
@@ -372,13 +378,13 @@ const EnterTheDetail: React.FC = () => {
 
   const onDownload = async () => {
     const formValues = formRef.current?.getFieldsValue();
-    const res = await EnterTheDetailService.export({
+    const res = await EnterTheDetailService.exportDetails({
       ...formValues,
       tradeDateYear: dayjs(formValues?.tradeDateYear).format('YYYY'),
     });
     if (res.success) {
       // 文件流下载
-      downloadBlobFile(res.data, '交易明细表.xlsx');
+      downloadBlobFile(res.data, '交易明细.xlsx');
       message.success('导出成功');
     }
   };

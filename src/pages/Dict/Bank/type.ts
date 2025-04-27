@@ -4,4 +4,5 @@ export interface BankType {
   cardNumber?: string;
   remark?: string;
   createTime?: string;
+  corporationId?: string;
 }

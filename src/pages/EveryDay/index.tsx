@@ -127,6 +127,7 @@ const Company: React.FC = () => {
         }}
         toolBarRender={false}
         request={EnterTheDetailService.getAllTransactionDates<{ date: string }>}
+        // @ts-ignore
         columns={columns}
         columnEmptyText=""
         bordered

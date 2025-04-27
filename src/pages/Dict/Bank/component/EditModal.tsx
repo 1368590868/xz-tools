@@ -1,6 +1,6 @@
 import { BankService } from '@/services';
 import { ActionType } from '@ant-design/pro-components';
-import { Form, Input, InputNumber, message, Modal } from 'antd';
+import { Form, Input, InputNumber, message, Modal, Select } from 'antd';
 import React, { useImperativeHandle, useState } from 'react';
 import { BankType } from '../type';
 import './index.module.less';
@@ -8,6 +8,7 @@ import './index.module.less';
 interface Props {
   ref: any;
   actionRef: { current: ActionType | undefined };
+  compnayList: BankType[];
 }
 
 export interface EditModalRef {
@@ -15,10 +16,11 @@ export interface EditModalRef {
 }
 
 const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
-  const { actionRef } = props;
+  const { actionRef, compnayList = [] } = props;
   const [form] = Form.useForm();
 
   const [visible, setVisible] = useState(false);
+
   const [rows, setRows] = useState<BankType>({ id: '', name: '', remark: '' });
   const title = rows.id ? '修改银行名称' : '新增银行名称';
 
@@ -46,6 +48,8 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
         message.success('修改成功');
         setVisible(false);
         actionRef.current?.reload(true);
+      } else {
+        message.error(res.message);
       }
     } catch (error) {
       console.log(error);
@@ -55,6 +59,26 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
   return (
     <Modal title={title} open={visible} onOk={doUpdate} onCancel={() => setVisible(false)}>
       <Form form={form} labelCol={{ span: 4 }}>
+        <Form.Item
+          label="公司名称"
+          name="corporationId"
+          rules={[
+            {
+              required: true,
+              message: '请现在公司名称',
+            },
+          ]}
+        >
+          <Select
+            placeholder="请选择公司名称"
+            showSearch
+            optionFilterProp="label"
+            options={compnayList.map((x) => ({
+              label: x.name,
+              value: x.id,
+            }))}
+          />
+        </Form.Item>
         <Form.Item
           label="银行名称"
           name="name"
