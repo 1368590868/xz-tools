@@ -38,7 +38,7 @@ const BarCount: React.FC<BarCountProps> = ({ data }) => {
       console.log(data, ' res data ');
       // 准备数据
       const businessTypes = data.map((item) => item.businessTypeName);
-      const incomeData = data.map((item) => item.incomeAmount);
+      const incomeData = data.map((item) => +item.incomeAmount);
       const expenseData = data.map((item) => +item.expenseAmount);
 
       const option = {

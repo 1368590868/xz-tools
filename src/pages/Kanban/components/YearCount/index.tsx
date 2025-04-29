@@ -45,6 +45,8 @@ const YearCount: React.FC = () => {
         const count = index >= datasource.length - 4;
         return count
           ? ''
+          : +value === -1
+          ? ''
           : new Intl.NumberFormat('zh-CN', {
               style: 'currency',
               currency: 'CNY',
@@ -60,6 +62,8 @@ const YearCount: React.FC = () => {
         const count = index === datasource.length - 1;
         return count
           ? value + '%'
+          : +value === -1
+          ? ''
           : new Intl.NumberFormat('zh-CN', {
               style: 'currency',
               currency: 'CNY',
@@ -75,6 +79,8 @@ const YearCount: React.FC = () => {
         const count = index === datasource.length - 1;
         return count
           ? value + '%'
+          : +value === -1
+          ? ''
           : new Intl.NumberFormat('zh-CN', {
               style: 'currency',
               currency: 'CNY',
@@ -89,6 +95,8 @@ const YearCount: React.FC = () => {
       render: (value: string, _: any, index: number) => {
         const count = index === datasource.length - 4 || index === datasource.length - 1;
         return count
+          ? ''
+          : +value === -1
           ? ''
           : new Intl.NumberFormat('zh-CN', {
               style: 'currency',
@@ -163,6 +171,23 @@ const YearCount: React.FC = () => {
       ...values,
       tradeDateYear: dayjs(values.tradeDateYear).format('YYYY'),
     });
+
+    const resData = res.data || [];
+    // 判断当前搜索年份，如果是当前年份，就只显示到当前月份，超出的月份数据全部转换为0
+    const currentYear = dayjs().format('YYYY');
+    if (dayjs(values.tradeDateYear).format('YYYY') === currentYear) {
+      const currentMonth = dayjs().format('M');
+
+      for (let i = 0; i < resData.length; i++) {
+        if (+dayjs(resData[i].month).format('M') > +currentMonth) {
+          resData[i].incomeAmount = -1;
+          resData[i].expenseAmount = -1;
+          resData[i].balance = -1;
+          resData[i].initialValue = -1;
+        }
+      }
+    }
+
     setDatasource(res.data || []);
   };
 
@@ -192,7 +217,7 @@ const YearCount: React.FC = () => {
                 };
               }}
             >
-              <DatePicker.YearPicker format="YYYY" allowClear={false} />
+              <DatePicker.YearPicker format="YYYY" allowClear={false} maxDate={dayjs()} />
             </Form.Item>
           </Col>
           <Col>
