@@ -25,18 +25,6 @@ const EnterTheDetail: React.FC = () => {
 
   const modalRef = useRef<EditModalRef | null>(null);
 
-  const onDelete = async (id: string) => {
-    try {
-      const res = await EnterTheDetailService.delete(id);
-      if (res.success) {
-        message.success('删除成功');
-        actionRef.current?.reload();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const [companyList, setCompanyList] = React.useState<CompanyType[]>([]);
   const [otherCompanyList, setOtherCompanyList] = React.useState<OtherCompanyType[]>([]);
   const [bankList, setBankList] = React.useState<BankType[]>([]);
@@ -412,14 +400,40 @@ const EnterTheDetail: React.FC = () => {
     incomeAmount: 0,
     expenseAmount: 0,
   });
-  const getSummary = async (params: any) => {
-    const res = await EnterTheDetailService.sumEnterTheDetails(params);
-    setSummaryData(res.data);
+
+  const [requestParams, setRequestParams] = useState({});
+  const getSummary = async (params?: undefined | any) => {
+    const res = await EnterTheDetailService.sumEnterTheDetails(params || requestParams);
+    setSummaryData(
+      res.data || {
+        incomeAmount: 0,
+        expenseAmount: 0,
+      },
+    );
   };
 
+  const onInit = async () => {
+    const res = await EnterTheDetailService.sumEnterTheDetails({
+      tradeDateYear: dayjs().format('YYYY'),
+    });
+    setSummaryData(res.data);
+  };
   useEffect(() => {
-    getSummary({ tradeDateYear: dayjs().format('YYYY') });
+    onInit();
   }, []);
+
+  const onDelete = async (id: string) => {
+    try {
+      const res = await EnterTheDetailService.delete(id);
+      if (res.success) {
+        message.success('删除成功');
+        actionRef.current?.reload();
+        getSummary();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <PageContainer>
@@ -462,7 +476,12 @@ const EnterTheDetail: React.FC = () => {
             <DownloadOutlined /> 下载
           </Button>,
         ]}
-        request={EnterTheDetailService.getList<EnterFormType>}
+        request={(params) => {
+          setRequestParams(params);
+          getSummary(params);
+
+          return EnterTheDetailService.getList<EnterFormType>(params);
+        }}
         summary={() => (
           <Table.Summary fixed>
             <Table.Summary.Row>
@@ -510,13 +529,18 @@ const EnterTheDetail: React.FC = () => {
             </Table.Summary.Row>
           </Table.Summary>
         )}
-        onSubmit={getSummary}
+        // onSubmit={getSummary}
         columns={columns}
         columnEmptyText=""
         bordered
       />
 
-      <EditModal ref={modalRef} actionRef={actionRef} optionsList={optionsList}></EditModal>
+      <EditModal
+        ref={modalRef}
+        actionRef={actionRef}
+        optionsList={optionsList}
+        getSummary={getSummary}
+      ></EditModal>
     </PageContainer>
   );
 };

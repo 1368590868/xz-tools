@@ -12,6 +12,7 @@ interface Props {
   ref: any;
   actionRef: { current: ActionType | undefined };
   optionsList: OptionsListType;
+  getSummary: () => void;
 }
 
 export interface EditModalRef {
@@ -19,7 +20,7 @@ export interface EditModalRef {
 }
 
 const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
-  const { actionRef } = props;
+  const { actionRef, getSummary } = props;
   const [loading, setLoading] = useState(false);
   const multipleRef = useRef<MultipleRef>(null);
   const [form] = Form.useForm<EnterFormType>();
@@ -79,6 +80,7 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
           })
           .finally(() => {
             setLoading(false);
+            getSummary();
           });
         return;
       }
@@ -100,6 +102,7 @@ const EditModal: React.FC<Props> = React.forwardRef((props, ref) => {
         message.success('修改成功');
         setVisible(false);
         actionRef.current?.reload(true);
+        getSummary();
       }
     } catch (error) {
       console.log(error);
