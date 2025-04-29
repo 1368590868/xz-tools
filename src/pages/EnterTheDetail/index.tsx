@@ -10,9 +10,9 @@ import { downloadBlobFile } from '@/utils/download';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns, ProFormInstance } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { Button, DatePicker, message, Popconfirm, Select } from 'antd';
+import { Button, DatePicker, message, Popconfirm, Select, Table } from 'antd';
 import dayjs from 'dayjs';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BankType } from '../Dict/Bank/type';
 import { BusinessType } from '../Dict/BusinessType/type';
 import { CompanyType } from '../Dict/Company/type';
@@ -305,14 +305,6 @@ const EnterTheDetail: React.FC = () => {
       width: 180,
     },
     {
-      title: '对手方名称',
-      align: 'center',
-      dataIndex: 'otherCorporationName',
-      ellipsis: true,
-      hideInSearch: true,
-      width: 180,
-    },
-    {
       title: '银行名称',
       align: 'center',
       dataIndex: 'bankName',
@@ -320,6 +312,15 @@ const EnterTheDetail: React.FC = () => {
       hideInSearch: true,
       width: 200,
     },
+    {
+      title: '对手方名称',
+      align: 'center',
+      dataIndex: 'otherCorporationName',
+      ellipsis: true,
+      hideInSearch: true,
+      width: 180,
+    },
+
     {
       title: '业务类型',
       align: 'center',
@@ -407,6 +408,19 @@ const EnterTheDetail: React.FC = () => {
     }
   };
 
+  const [summaryData, setSummaryData] = useState({
+    incomeAmount: 0,
+    expenseAmount: 0,
+  });
+  const getSummary = async (params: any) => {
+    const res = await EnterTheDetailService.sumEnterTheDetails(params);
+    setSummaryData(res.data);
+  };
+
+  useEffect(() => {
+    getSummary({ tradeDateYear: dayjs().format('YYYY') });
+  }, []);
+
   return (
     <PageContainer>
       <ProTable<EnterFormType, API.PageParams>
@@ -449,6 +463,54 @@ const EnterTheDetail: React.FC = () => {
           </Button>,
         ]}
         request={EnterTheDetailService.getList<EnterFormType>}
+        summary={() => (
+          <Table.Summary fixed>
+            <Table.Summary.Row>
+              {/* 前面合并单元格，用于展示“全部合计” */}
+              <Table.Summary.Cell index={0} colSpan={columns.length - 9}>
+                <div style={{ textAlign: 'left', fontWeight: 600 }}>全部合计：</div>
+              </Table.Summary.Cell>
+
+              {/* 收入金额列 */}
+              <Table.Summary.Cell index={1}>
+                <div
+                  style={{
+                    color: 'green',
+                    fontWeight: 600,
+                    whiteSpace: 'nowrap',
+                    textAlign: 'center',
+                  }}
+                >
+                  {new Intl.NumberFormat('zh-CN', {
+                    style: 'currency',
+                    currency: 'CNY',
+                  }).format(summaryData.incomeAmount)}
+                </div>
+              </Table.Summary.Cell>
+
+              {/* 支出金额列 */}
+              <Table.Summary.Cell index={2}>
+                <div
+                  style={{
+                    color: 'red',
+                    fontWeight: 600,
+                    whiteSpace: 'nowrap',
+                    textAlign: 'center',
+                  }}
+                >
+                  {new Intl.NumberFormat('zh-CN', {
+                    style: 'currency',
+                    currency: 'CNY',
+                  }).format(summaryData.expenseAmount)}
+                </div>
+              </Table.Summary.Cell>
+
+              {/* 操作列占位 */}
+              <Table.Summary.Cell index={3} />
+            </Table.Summary.Row>
+          </Table.Summary>
+        )}
+        onSubmit={getSummary}
         columns={columns}
         columnEmptyText=""
         bordered

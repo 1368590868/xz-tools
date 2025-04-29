@@ -749,6 +749,28 @@ export class EnterTheDetailService {
       };
     }
   }
+
+  // 统计收支和数据sumEnterTheDetails
+  static async sumEnterTheDetails(params: PageParams): Promise<{
+    success: boolean;
+    data: any;
+  }> {
+    try {
+      const res = await request(`/api/enterTheDetails/sumEnterTheDetails`, {
+        method: 'GET',
+        params,
+      });
+      return {
+        success: res.code === 0,
+        data: res.data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        data: [],
+      };
+    }
+  }
 }
 // 用户登录 修改密码
 export class UserService {
