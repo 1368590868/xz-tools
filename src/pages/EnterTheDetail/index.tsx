@@ -10,7 +10,7 @@ import { downloadBlobFile } from '@/utils/download';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns, ProFormInstance } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { Button, DatePicker, message, Popconfirm, Select, Table } from 'antd';
+import { Button, DatePicker, message, Modal, Popconfirm, Select, Table } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useRef, useState } from 'react';
 import { BankType } from '../Dict/Bank/type';
@@ -370,7 +370,8 @@ const EnterTheDetail: React.FC = () => {
           key={'delete'}
           title="确定删除当前交易明细吗？"
           description=""
-          onConfirm={() => onDelete(record.id || '')}
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+          onConfirm={() => onDelete([record.id || ''])}
           onCancel={() => {}}
           okText="确定"
           cancelText="取消"
@@ -422,9 +423,9 @@ const EnterTheDetail: React.FC = () => {
     onInit();
   }, []);
 
-  const onDelete = async (id: string) => {
+  const onDelete = async (ids: string[]) => {
     try {
-      const res = await EnterTheDetailService.delete(id);
+      const res = await EnterTheDetailService.delete(ids);
       if (res.success) {
         message.success('删除成功');
         actionRef.current?.reload();
@@ -435,10 +436,38 @@ const EnterTheDetail: React.FC = () => {
     }
   };
 
+  const [selectedRowKeys, setSelectedRowKeys] = React.useState<React.Key[]>([]);
+  const handleBatchDelete = async () => {
+    // 批量删除confirm 确认框
+    Modal.confirm({
+      title: '确定删除选中的明细吗？',
+      content: '删除后无法恢复',
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const res = await EnterTheDetailService.delete(selectedRowKeys as string[]);
+          if (res.success) {
+            message.success('批量删除成功');
+            setSelectedRowKeys([]);
+            actionRef.current?.reload();
+            getSummary();
+          }
+        } catch (error) {
+          message.error('批量删除失败');
+        }
+      },
+    });
+  };
   return (
     <PageContainer>
       <ProTable<EnterFormType, API.PageParams>
         actionRef={actionRef}
+        rowKey="id"
+        rowSelection={{
+          selectedRowKeys,
+          onChange: setSelectedRowKeys,
+        }}
         formRef={formRef}
         form={{
           onValuesChange: (changedValues) => {
@@ -449,7 +478,6 @@ const EnterTheDetail: React.FC = () => {
             }
           },
         }}
-        rowKey="id"
         scroll={{ x: 1300 }}
         search={{
           labelWidth: 100,
@@ -475,6 +503,14 @@ const EnterTheDetail: React.FC = () => {
           <Button key="download" onClick={onDownload}>
             <DownloadOutlined /> 下载
           </Button>,
+          <Button
+            danger
+            key="batchDelete"
+            disabled={selectedRowKeys.length === 0}
+            onClick={handleBatchDelete}
+          >
+            批量删除
+          </Button>,
         ]}
         request={(params) => {
           setRequestParams(params);
@@ -486,7 +522,7 @@ const EnterTheDetail: React.FC = () => {
           <Table.Summary fixed>
             <Table.Summary.Row>
               {/* 前面合并单元格，用于展示“全部合计” */}
-              <Table.Summary.Cell index={0} colSpan={columns.length - 9}>
+              <Table.Summary.Cell index={0} colSpan={columns.length - 8}>
                 <div style={{ textAlign: 'left', fontWeight: 600 }}>全部合计：</div>
               </Table.Summary.Cell>
 
@@ -503,7 +539,7 @@ const EnterTheDetail: React.FC = () => {
                   {new Intl.NumberFormat('zh-CN', {
                     style: 'currency',
                     currency: 'CNY',
-                  }).format(summaryData.incomeAmount)}
+                  }).format(summaryData?.incomeAmount)}
                 </div>
               </Table.Summary.Cell>
 
@@ -520,7 +556,7 @@ const EnterTheDetail: React.FC = () => {
                   {new Intl.NumberFormat('zh-CN', {
                     style: 'currency',
                     currency: 'CNY',
-                  }).format(summaryData.expenseAmount)}
+                  }).format(summaryData?.expenseAmount)}
                 </div>
               </Table.Summary.Cell>
 

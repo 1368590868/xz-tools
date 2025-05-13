@@ -1,7 +1,7 @@
 import { EnterTheDetailService } from '@/services';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
-import { Button, Card, Col, DatePicker, Empty, Row } from 'antd';
+import { Button, Card, Col, DatePicker, Empty, Row, Space } from 'antd';
 import dayjs from 'dayjs';
 import { PieChart } from 'echarts/charts';
 import { LegendComponent, TitleComponent, TooltipComponent } from 'echarts/components';
@@ -12,6 +12,7 @@ import React, { useEffect, useState } from 'react';
 import AccountCard from './components/AccountCard';
 import BarCount from './components/BarCount';
 import CounterPartyCard from './components/CounterpartyCard';
+import ExcelModal from './components/ExcelModal';
 import YearCount from './components/YearCount';
 import './index.less';
 
@@ -31,6 +32,7 @@ echarts.use([
 // 账户数据类型
 export interface AccountData {
   id: number;
+  bankId?: string;
   title: string;
   bankName: string;
   corporationName: string;
@@ -67,6 +69,10 @@ const KanbanPage: React.FC = () => {
   //   柱状图
   const [barData, setBarData] = useState<any>([]);
 
+  // Excel 模式
+  const [excelVisible, setExcelVisible] = useState<boolean>(false);
+  const [searchParams, setSearchParams] = useState<any>({});
+
   const getBardData = async () => {
     const startDate = dateRange[0] ? dayjs(dateRange[0]).format('YYYY-MM-DD') : '';
     const endDate = dateRange[1] ? dayjs(dateRange[1]).format('YYYY-MM-DD') : '';
@@ -74,6 +80,7 @@ const KanbanPage: React.FC = () => {
       startDate,
       endDate,
     };
+    setSearchParams(params);
     const service = [
       EnterTheDetailService.getBudgetData(params),
       EnterTheDetailService.getExpenditureData(params),
@@ -101,6 +108,7 @@ const KanbanPage: React.FC = () => {
       startDate,
       endDate,
     };
+    setSearchParams(params);
     const service = [
       EnterTheDetailService.getBudgetData(params),
       EnterTheDetailService.getExpenditureData(params),
@@ -110,6 +118,9 @@ const KanbanPage: React.FC = () => {
     setAccountData(res[0].data);
     setOtherData(res[1].data);
     setBarData(res[2].data);
+  };
+  const onCancel = () => {
+    setExcelVisible(false);
   };
 
   return (
@@ -142,7 +153,17 @@ const KanbanPage: React.FC = () => {
         </div>
 
         <div className="dashboard-section">
-          <h2 className="section-title">账户收支看板</h2>
+          <Space style={{ marginBottom: 16 }}>
+            <span style={{ fontSize: 16, fontWeight: 'bold' }}>账户收支看板</span>
+            <Button
+              type="primary"
+              onClick={() => {
+                setExcelVisible(true);
+              }}
+            >
+              Excel 模式
+            </Button>
+          </Space>
           <div className="carousel-container">
             <div className="carousel-slide">
               <div style={{ display: 'flex', gap: 30, overflowX: 'scroll' }}>
@@ -193,6 +214,12 @@ const KanbanPage: React.FC = () => {
 
           <YearCount />
         </div>
+        <ExcelModal
+          visible={excelVisible}
+          onCancel={onCancel}
+          data={accountData}
+          searchParams={searchParams}
+        />
       </Card>
     </PageContainer>
   );

@@ -551,14 +551,14 @@ export class EnterTheDetailService {
   }
 
   // 删除银行
-  static async delete(id: string): Promise<{
+  static async delete(ids: string[]): Promise<{
     success: boolean;
     message: string;
   }> {
     try {
       const res = await request(`/api/enterTheDetails/deleteBatch`, {
         method: 'POST',
-        data: [id],
+        data: ids,
       });
       return {
         success: res.code === 0,
@@ -662,6 +662,30 @@ export class EnterTheDetailService {
       return {
         success: false,
         data: [],
+      };
+    }
+  }
+
+  // Excel Modal 导出
+  static async exportExcelModal(params: PageParams): Promise<{
+    success: boolean;
+    data: Blob;
+  }> {
+    try {
+      const res = await request(`/api/enterTheDetails/budgetExport`, {
+        method: 'GET',
+        params,
+        responseType: 'blob',
+      });
+      return {
+        success: true,
+        data: res,
+      };
+    } catch (error) {
+      console.error('导出出错:', error);
+      return {
+        success: false,
+        data: new Blob(),
       };
     }
   }
