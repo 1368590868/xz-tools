@@ -177,6 +177,7 @@ const Bank: React.FC = () => {
                 id: null,
                 cardNumber: undefined,
                 corporationId: undefined,
+                initialValue: undefined,
               });
             }}
           >

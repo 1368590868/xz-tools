@@ -5,4 +5,5 @@ export interface BankType {
   remark?: string;
   createTime?: string;
   corporationId?: string;
+  initialValue?: number;
 }
