@@ -87,6 +87,19 @@ const AddForm: React.FC<AddFormProps> = ({ form, optionsList }) => {
           options={optionsList.companyList}
         />
       </Form.Item>
+
+      <Form.Item
+        label="银行名称"
+        name="bankId"
+        rules={[
+          {
+            required: true,
+            message: '请选择银行名称',
+          },
+        ]}
+      >
+        <Select showSearch optionFilterProp="label" placeholder="请选择" options={bankList} />
+      </Form.Item>
       <Form.Item
         label="对手方名称"
         name="otherCorporationId"
@@ -103,18 +116,6 @@ const AddForm: React.FC<AddFormProps> = ({ form, optionsList }) => {
           placeholder="请选择"
           options={optionsList.otherCompanyList}
         />
-      </Form.Item>
-      <Form.Item
-        label="银行名称"
-        name="bankId"
-        rules={[
-          {
-            required: true,
-            message: '请选择银行名称',
-          },
-        ]}
-      >
-        <Select showSearch optionFilterProp="label" placeholder="请选择" options={bankList} />
       </Form.Item>
       <Form.Item
         label="业务类型"
@@ -163,7 +164,7 @@ const AddForm: React.FC<AddFormProps> = ({ form, optionsList }) => {
           placeholder="请填写交易金额"
           suffix="元"
           stringMode
-          min={1}
+          min={0.01}
           precision={2}
         />
       </Form.Item>
