@@ -45,6 +45,38 @@ export default [
     component: './EnterTheDetail',
   },
   {
+    path: '/loan',
+    name: '贷款利息管理',
+    locale: false,
+    icon: 'MoneyCollectOutlined',
+    routes: [
+      {
+        path: '/loan',
+        redirect: '/loan/loanInterest',
+      },
+      {
+        path: '/loan/loanInterest',
+        name: '贷款列表',
+        locale: false,
+        component: './Loan/LoanInterest',
+      },
+      {
+        path: '/loan/addLogn',
+        name: '新增贷款利息',
+        locale: false,
+        component: './Loan/AddLogn',
+        // 隐藏自己和子菜单
+        hideInMenu: true,
+      },
+      {
+        path: '/loan/repaymentList',
+        name: '还款列表',
+        locale: false,
+        component: './Loan/RepaymentList',
+      },
+    ],
+  },
+  {
     path: '/dict',
     name: '字典配置',
     icon: 'FileSearchOutlined',

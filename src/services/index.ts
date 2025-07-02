@@ -891,3 +891,292 @@ export class TempEnterTheDetailsService {
     }
   }
 }
+
+// 贷款利息
+export class LoanService {
+  // 查询公司列表（用于ProTable）
+  static async getList<T>(params: PageParams): Promise<{
+    data: T[];
+    total: number;
+    success: boolean;
+  }> {
+    try {
+      const { current: pageNum, pageSize, ...rest } = params;
+      const res = await request<{
+        data: {
+          list: T[];
+          total: number;
+        };
+        code: number;
+      }>('/api/loanInterest/listPage', {
+        method: 'GET',
+        params: {
+          pageNum,
+          pageSize,
+          ...rest,
+        },
+      });
+
+      return {
+        data: res.data.list || [],
+        total: res.data.total || 0,
+        success: res.code === 0,
+      };
+    } catch (error) {
+      console.error('获取公司列表出错:', error);
+      return {
+        data: [],
+        total: 0,
+        success: false,
+      };
+    }
+  }
+
+  // getLoanData
+  static async getLoanData<T>(data:any):Promise<any>{
+    try {
+      const res = await request(`/api/loanInterest/interestCalculation`, {
+        method: 'POST',
+        data,
+      });
+      return {
+        success: res.code === 0,
+        data: res.data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        data: [],
+      };
+    }
+  }
+
+  // 添加公司
+  static async addCompany(data: Omit<CompanyType, 'id'>): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    try {
+      const res = await request('/api/loanInterest/create', {
+        method: 'POST',
+        data,
+      });
+      return {
+        success: res.code === 0,
+        message: res.message || '添加成功',
+      };
+    } catch (error) {
+      console.error('添加公司出错:', error);
+      return {
+        success: false,
+        message: '添加失败',
+      };
+    }
+  }
+
+  // 更新公司
+  static async updateCompany(data: Partial<CompanyType>): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    try {
+      const res = await request(`/api/loanInterest/modify`, {
+        method: 'POST',
+        data,
+      });
+      return {
+        success: res.code === 0,
+        message: res.message || '更新成功',
+      };
+    } catch (error) {
+      console.error('更新公司出错:', error);
+      return {
+        success: false,
+        message: '更新失败',
+      };
+    }
+  }
+
+  // 删除公司
+  static async deleteCompany(id: string): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    try {
+      const res = await request(`/api/loanInterest/deleteBatch`, {
+        method: 'POST',
+        data: [id],
+      });
+      return {
+        success: res.code === 0,
+        message: res.message || '删除成功',
+      };
+    } catch (error) {
+      console.error('删除公司出错:', error);
+      return {
+        success: false,
+        message: '删除失败',
+      };
+    }
+  }
+}
+
+// 利息查看
+export class LoanInterestService {
+  // 查询公司列表（用于ProTable）
+  static async getCompanyList<T>(params: PageParams): Promise<{
+    data: T[];
+    total: number;
+    success: boolean;
+  }> {
+    try {
+      const { current: pageNum, pageSize, ...rest } = params;
+      const res = await request<{
+        data: {
+          list: T[];
+          total: number;
+        };
+        code: number;
+      }>('/api/loanInterestDetails/listPage', {
+        method: 'GET',
+        params: {
+          pageNum,
+          pageSize,
+          ...rest,
+        },
+      });
+
+      return {
+        data: res.data.list || [],
+        total: res.data.total || 0,
+        success: res.code === 0,
+      };
+    } catch (error) {
+      console.error('获取公司列表出错:', error);
+      return {
+        data: [],
+        total: 0,
+        success: false,
+      };
+    }
+  }
+
+  // 获取还款列表总计
+  static async getTotal(params: PageParams): Promise<{
+    success: boolean;
+    data: any;
+  }> {
+    try {
+      const res = await request(`/api/loanInterestDetails/totalAmount`, {
+        method: 'GET',
+        params,
+      });
+      return {
+        success: res.code === 0,
+        data: res.data,
+      };
+    } catch (error) {
+      console.error('获取还款列表总计出错:', error);
+      return {
+        success: false,
+        data: {
+          principalAmount: 0,
+          repayAmount: 0,
+        },
+      };
+    }
+  }
+
+  static async getCompanyDetailList<T>(id:string): Promise<{
+    success: boolean;
+    data: any;
+  }> {
+    try {
+      const res = await request(`/api/loanInterest/getById`, {
+        method: 'GET',
+        params:{
+          id
+        },
+      });
+      return {
+        success: res.code === 0,
+        data: res.data,
+      };
+    } catch (error) {
+      console.error('获取公司详情出错:', error);
+      return {
+        success: false,
+        data: [],
+      };
+    }
+  }
+
+  // 添加公司
+  static async addCompany(data: Omit<CompanyType, 'id'>): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    try {
+      const res = await request('/api/loanInterest/create', {
+        method: 'POST',
+        data,
+      });
+      return {
+        success: res.code === 0,
+        message: res.message || '添加成功',
+      };
+    } catch (error) {
+      console.error('添加公司出错:', error);
+      return {
+        success: false,
+        message: '添加失败',
+      };
+    }
+  }
+
+  // 更新公司
+  static async updateCompany(data: Partial<CompanyType>): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    try {
+      const res = await request(`/api/loanInterest/modify`, {
+        method: 'POST',
+        data,
+      });
+      return {
+        success: res.code === 0,
+        message: res.message || '更新成功',
+      };
+    } catch (error) {
+      console.error('更新公司出错:', error);
+      return {
+        success: false,
+        message: '更新失败',
+      };
+    }
+  }
+
+  // 删除公司
+  static async deleteCompany(id: string): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    try {
+      const res = await request(`/api/loanInterest/deleteBatch`, {
+        method: 'POST',
+        data: [id],
+      });
+      return {
+        success: res.code === 0,
+        message: res.message || '删除成功',
+      };
+    } catch (error) {
+      console.error('删除公司出错:', error);
+      return {
+        success: false,
+        message: '删除失败',
+      };
+    }
+  }
+}
